@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en"
+  class="scrollbar-thin scrollbar-thumb-[#80006080] scrollbar-track-neutral-700 scrollbar-track-rounded-xxl">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
+  <script src="https://kit.fontawesome.com/8f7db24c63.js" crossorigin="anonymous"></script>
+  <link rel="stylesheet" href="/stylesheet/tailwind.css">
+  <title>{{title}}</title>
+</head>
+
+<body>
+  <div
+    class="fixed top-0 z-[-2] h-screen w-screen bg-neutral-950 bg-[radial-gradient(ellipse_80%_80%_at_50%_-20%,rgba(120,119,198,0.3),rgba(255,255,255,0))]">
+  </div>
+
+
+  <div id="overlay" class="fixed inset-0 bg-black bg-opacity-50 invisible">
+  </div>
+  <div id="cart-container"
+    class="fixed h-full w-96 right-0 transition-all box-border overflow-y-scroll bg-slate-500 p-5 translate-x-full z-10">
+    <div id="close-cart-button" class="font-black absolute top-3 right-3 bg-red-600 cursor-pointer rounded-xl p-4">
+      <i class="fi fi-rr-cross"></i>
+    </div>
+    <div id="cart-title">Mi Carrito</div>
+    <div id="cart-items"></div>
+    <div id="cart-total">Total: $0</div>
+
+    <!-- Botones para acciones -->
+    <button id="checkout-button">Pagar</button>
+    <button id="clear-cart-button">Vaciar Carrito</button>
+
+  </div>
+
+
+  <nav
+    class=" navbar bg-black bg-opacity-40 text-white flex items-center justify-evenly font-sans shadow-md overflow-hidden p-8 text-xl">
+    <a href="/" class="navbar-brand transition-all hover:brightness-125">
+      <img class="w-36" src="../assets/image/logowhite.png" alt=""></a>
+    <ul class="navbar-nav flex gap-4">
+      <li class="nav-item transition-all hover:scale-110"><a href="/" class="nav-link">Inicio</a></li>
+      <li class="nav-item transition-all hover:scale-110"><a href="/products" class="nav-link">Productos</a></li>
+      {{#if (eq user.role 'admin')}}
+      <li class="nav-item transition-all hover:scale-110"><a href="/add-product" class="nav-link">Admin panel</a></li>
+      {{/if}}
+      <li hidden class="nav-item transition-all hover:scale-110"><a href="/chat" class="nav-link">Chat</a></li>
+      {{!-- <li class="nav-item transition-all hover:scale-110"><a href="/profile" data-tooltip={{#if user}}"Iniciaste
+          sesión como: {{user.first_name}} {{user.last_name}} {{#if (eq user.role 'admin' )}}- ADMIN{{/if}}"
+          {{else}}"Iniciar sesión / Registrarse" {{/if}} data-placement="bottom"><i class="fi fi-rr-user icon"></i></a>
+      </li> --}}
+
+      <li class="nav-item transition-all hover:scale-110"><a class="{{#if user}} text-green-400{{/if}}" href="/profile">
+          <i class="fi fi-rr-user icon "></i></a>
+      </li>
+
+      <li class="nav-item transition-all cursor-pointer hover:scale-110"><i id="cart-button"
+          class="fi fi-rr-shopping-cart icon"><span id="cart-total-items">0</span></i></li>
+    </ul>
+    {{#if (eq user.role 'admin')}}
+    <a href="/debug" class="navbar-brand text-2xl">debug</a>
+    {{/if}}
+  </nav>
+  <main class="container text-white p-8 mx-auto min-h-screen flex flex-col">
+    {{{body}}}
+  </main>
+
+
+
+
+  <footer class="bg-white dark:bg-gray-900">
+    <div class="mx-auto w-full max-w-screen-xl p-4 py-6 lg:py-8">
+      <div class="md:flex md:justify-between">
+        <div class="mb-6 md:mb-0">
+          <a href="https://flowbite.com/" class="flex items-center">
+            <img src="../assets/image/logoVerticalWhite.png" class="h-20 me-3" alt="Click n' Shop Logo" />
+          </a>
+        </div>
+        <div class="grid grid-cols-2 gap-8 sm:gap-6 sm:grid-cols-3">
+          <div>
+            <h2 class="mb-6 text-sm font-semibold text-gray-900 uppercase dark:text-white">Acerca de</h2>
+            <ul class="text-gray-500 dark:text-gray-400 font-medium">
+              <li class="mb-4">
+                <a href="#" class="hover:underline">ClicknShop</a>
+              </li>
+            </ul>
+          </div>
+          <div>
+            <h2 class="mb-6 text-sm font-semibold text-gray-900 uppercase dark:text-white">Siguenos!</h2>
+            <ul class="text-gray-500 dark:text-gray-400 font-medium">
+              <li class="mb-4">
+                <a href="#" class="hover:underline ">Instagram</a>
+              </li>
+              <li>
+                <a href="#" class="hover:underline">Facebook</a>
+              </li>
+            </ul>
+          </div>
+          <div>
+            <h2 class="mb-6 text-sm font-semibold text-gray-900 uppercase dark:text-white">Legal</h2>
+            <ul class="text-gray-500 dark:text-gray-400 font-medium">
+              <li class="mb-4">
+                <a href="#" class="hover:underline">Política de privacidad</a>
+              </li>
+              <li>
+                <a href="#" class="hover:underline">Terminos y condiciones</a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+      <hr class="my-6 border-gray-200 sm:mx-auto dark:border-gray-700 lg:my-8" />
+      <div class="sm:flex sm:items-center sm:justify-between">
+        <span class="text-sm text-gray-500 sm:text-center dark:text-gray-400">© 2024 <a href="#"
+            class="hover:underline">Clickn'Shop</a>. Todos los derechos reservados.
+        </span>
+        <div class="flex mt-4 sm:justify-center sm:mt-0">
+          <a href="#" class="text-gray-500 hover:text-gray-900 dark:hover:text-white">
+            <i class="fa-brands fa-facebook"></i>
+            <span class="sr-only">Facebook page</span>
+          </a>
+          <a href="#" class="text-gray-500 hover:text-gray-900 dark:hover:text-white ms-5">
+            <i class="fa-brands fa-instagram"></i>
+            <span class="sr-only">Instagram community</span>
+          </a>
+
+        </div>
+      </div>
+    </div>
+  </footer>
+
+
+  <script src="/js/cart.js"></script>
+  <script src="/js/products.js"></script>
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+</body>
+
+</html>

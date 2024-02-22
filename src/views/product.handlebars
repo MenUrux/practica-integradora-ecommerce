@@ -1,0 +1,16 @@
+<a href="/products" class="opacity-80 hover:opacity-100 transition-all" role="button">
+    <i class="fa-solid fa-circle-left"></i> Volver</a>
+<div
+    class="mx-auto bg-white shadow-md border min-w-[80%] border-gray-200 rounded-lg p-4 sm:p-6 lg:p-8 dark:bg-gray-800 dark:border-gray-700">
+    <h1 class="text-4xl">{{product.title}}</h1>
+    {{#if product.thumbnail}}
+    <img src="{{product.thumbnail}}" alt="{{product.title}}">
+    {{else}}
+    <img src="/assets/image/no-image.jpg" alt="No Image">
+    {{/if}}
+    <p>Precio: ${{product.price}}</p>
+    <p>Código: {{product.code}}</p>
+    <p>Categoría: {{product.category}}</p>
+    <p>Stock: {{product.stock}}</p>
+    <p>Dueño: {{product.owner}}</p>
+</div>

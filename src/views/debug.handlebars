@@ -1,0 +1,35 @@
+<div class="mx-auto flex">
+  <div
+    class="mx-auto bg-white shadow-md border min-w-[30rem] border-gray-200 rounded-lg p-4 sm:p-6 lg:p-8 dark:bg-gray-800 dark:border-gray-700">
+    <form id="notificationForm" class="space-y-6">
+      <p id="message" class="alert alert-danger" role="alert">&nbsp;</p>
+
+      <button type="submit"
+        class="w-full transition-all text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">Enviar
+        confirmación</button>
+    </form>
+  </div>
+</div>
+
+<script>
+  document.getElementById('notificationForm').addEventListener('submit', function (e) {
+    e.preventDefault();
+
+    fetch('/api/notifications/mail', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+      })
+    })
+      .then(response => response.json())
+      .then(data => {
+        document.getElementById('message').innerText = data.message;
+      })
+      .catch((error) => {
+        console.error('Error:', error);
+        document.getElementById('message').innerText = 'Error al enviar la notificación.';
+      });
+  });
+</script>

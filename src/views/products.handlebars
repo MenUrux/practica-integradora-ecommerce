@@ -1,0 +1,113 @@
+{{#if user}}
+<h4>Hola {{user.first_name}}, éstas son nuestras últimas novedades...
+</h4>
+{{/if}}
+<h1 class="text-white text-4xl text-center">Productos</h1>
+
+<div class="container mx-auto p-4">
+    <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4">
+        {{#each payload}}
+        <div
+            class="bg-white border border-gray-200 rounded-lg shadow overflow-hidden dark:bg-gray-800 dark:border-gray-700 relative">
+            <div class="aspect-w-1 aspect-h-1 ">
+                <a href="#">
+                    {{#if this.thumbnail}}
+                    <!-- Si hay imagen, mostrarla -->
+                    <img class="object-cover rounded-t-lg w-full h-full" src="{{this.thumbnail}}" alt="{{this.title}}">
+                    {{else}}
+                    <!-- Si no hay imagen, mostrar imagen predeterminada -->
+                    <img class="object-cover rounded-t-lg w-full h-full" src="/assets/image/no-image.jpg"
+                        alt="No Image">
+                    {{/if}}
+                </a>
+            </div>
+            <div class="p-4">
+                <a href="/products/{{this._id}}" class="product-detail-link">
+                    {{!-- <a href="javascript:void(0);" class="product-detail-link" data-product-id="{{this._id}}"> --}}
+                        Ver
+                        detalles
+                        {{!-- </a> --}}
+
+                    <h5 class="text-xl font-semibold tracking-tight text-gray-900 dark:text-white">
+                        {{ this.title }}
+                    </h5>
+                </a>
+                <div class="flex items-center mt-2.5 mb-5">
+                    {{#lessorequal this.stock 0}}
+                    <p class="stock z-10 w-full h-full ">Disponibles: Agotado</p>
+                    <button class="no-stock">Agotado</button>
+                    {{else}}
+                    {{!-- Chequear si el stock es bajo (10 o menos) --}}
+                    {{#lessorequal this.stock 10}}
+                    <p class="stock">
+                        Disponibles: {{this.stock}}
+                        <span class="low-stock absolute top-0 left-0 w-full text-center bg-red-600">¡Últimas
+                            unidades!</span>
+                    </p>
+                    <button onclick="addProductToCart('{{this._id}}')"
+                        class="text-gray-900 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-200 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700">
+                        <i class="fi fi-rr-shopping-cart"></i> Agregar
+
+                    </button>
+                    {{else}}
+                    {{!-- Caso para cuando hay suficiente stock --}}
+                    <p class="stock">Disponibles: {{this.stock}}</p>
+                    <button onclick="addProductToCart('{{this._id}}')"
+                        class=" bottom-2 relative right-0  text-gray-900 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-200 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700">
+                        <i class="fi fi-rr-shopping-cart"></i> Agregar
+
+                        {{/lessorequal}}
+                        {{/lessorequal}}
+                </div>
+
+            </div>
+        </div>
+        {{/each}}
+    </div>
+</div>
+
+
+
+
+
+
+<div class="flex flex-col items-center">
+    <!-- Help text -->
+    <span class="text-sm text-gray-700 dark:text-gray-400">
+        Navegando página: <span class="font-semibold text-gray-900 dark:text-white">{{this.page}}</span>
+    </span>
+    <!-- Buttons -->
+    <div class="inline-flex mt-2 gap-4 xs:mt-0">
+        <a class="flex items-center justify-center px-3 h-8 text-sm font-medium text-white bg-gray-800 rounded-s hover:bg-gray-900 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
+            href="{{this.prevLink}}" role="button" {{#unless hasPrevPage}}disabled{{/unless}}>Anterior</a>
+        <a class="flex items-center justify-center px-3 h-8 text-sm font-medium text-white bg-gray-800 rounded-s hover:bg-gray-900 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
+            href="{{this.nextLink}}" role="button" {{#unless hasNextPage}}disabled{{/unless}}>Siguiente</a>
+    </div>
+</div>
+
+
+{{!--
+<script src="/js/products.js"></script> --}}
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        document.querySelectorAll('.product-detail-link').forEach(item => {
+            item.addEventListener('click', function () {
+                const productId = this.getAttribute('data-product-id');
+                fetch(`/api/products/${productId}`)
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Error al cargar los detalles del producto');
+                        }
+                        return response.json();
+                    })
+                    .then(product => {
+                        // Aquí manejas la respuesta. Por ejemplo, actualizando el DOM con los datos del producto
+                        console.log(product); // Muestra los detalles del producto en la consola como ejemplo
+                        // Actualiza el DOM según sea necesario para mostrar los detalles del producto
+                    })
+                    .catch(error => console.error(error));
+            });
+        });
+    });
+</script>

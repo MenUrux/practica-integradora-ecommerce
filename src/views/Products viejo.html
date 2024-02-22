@@ -1,0 +1,40 @@
+{{!--}}
+<div class="products">
+    {{#each payload}}
+    <article class="product">
+        {{#if this.thumbnail}}
+        <!-- Si hay imagen, mostrarla -->
+        <img src="{{this.thumbnail}}" alt="{{this.title}}">
+        {{else}}
+        <!-- Si no hay imagen, mostrar imagen predeterminada -->
+        <img src="/assets/image/no-image.jpg" alt="No Image">
+        {{/if}}
+        <p class="title">{{this.title}}</p>
+        {{!-- <p class="description">{{truncate this.description 75}}</p>
+        <p class="price">${{this.price}}</p>
+        <p class="category">Categoría: {{this.category}}</p>
+        <p class="code">{{this.code}}</p>
+        {{#lessorequal this.stock 0}}
+        <p class="stock">Disponibles: Agotado</p>
+        <button class="no-stock">Agotado</button>
+        {{else}}
+        {{!-- Chequear si el stock es bajo (10 o menos) --}}
+        {{#lessorequal this.stock 10}}
+        <p class="stock">
+            Disponibles: {{this.stock}}
+            <span class="low-stock">¡Últimas unidades!</span>
+        </p>
+        <button onclick="addProductToCart('{{this._id}}')">
+            <i class="fi fi-rr-shopping-cart"></i> Agregar a carrito
+        </button>
+        {{else}}
+        {{!-- Caso para cuando hay suficiente stock --}}
+        <p class="stock">Disponibles: {{this.stock}}</p>
+        <button onclick="addProductToCart('{{this._id}}')">
+            <i class="fi fi-rr-shopping-cart"></i> Agregar a carrito
+        </button>
+        {{/lessorequal}}
+        {{/lessorequal}}
+
+
+    </article>--}}

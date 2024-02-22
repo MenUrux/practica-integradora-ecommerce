@@ -1,0 +1,14 @@
+<div class="mx-auto bg-white shadow-md border min-w-[30rem] border-gray-200 rounded-lg p-4 sm:p-6 lg:p-8 dark:bg-gray-800 dark:border-gray-700
+  flex flex-col gap-3
+  ">
+  <h2 class="self-center">Tus datos:</h2>
+  <p><strong>Nombre: </strong>{{user.first_name}}</p>
+  <p><strong>Apellido: </strong>{{user.last_name}}</p>
+  <p><strong>Email: </strong>{{user.email}}</p>
+  <p><strong>Edad: </strong>{{user.age}}</p>
+  <p><strong>Tu rol: </strong>{{user.role}}</p>
+  {{!-- <p><strong>Nombre: </strong>{{user.first_name}}</p> --}}
+  <hr>
+  <a href="/api/sessions/logout" class="focus:outline-none text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900
+    self-end w-max" role="button"><i class="fi fi-rr-exit"> </i>Cerrar sesión</a>
+</div>
