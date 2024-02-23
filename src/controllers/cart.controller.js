@@ -8,17 +8,17 @@ import UserModel from '../dao/models/user.model.js'; // Asegúrate de que la rut
 export default class CartsController {
 
     static async get(filter = {}, opts = {}) {
-        const orders = await OrderDao.get(filter, opts);
+        const carts = await OrderDao.get(filter, opts);
         console.log(`Ordenes encontrados: ${orders.length}`);
-        return orders;
+        return carts;
     }
 
-    static async getById(oid) {
-        const order = await OrderDao.getById(oid);
-        if (order) {
-            console.log(`Se encontro la orden exitosamente ${JSON.stringify(order)}`);
+    static async getById(cid) {
+        const cart = await OrderDao.getById(cid);
+        if (cart) {
+            console.log(`Se encontro la orden exitosamente ${JSON.stringify(cart)}`);
         }
-        return order;
+        return cart;
 
     }
 
