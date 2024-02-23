@@ -74,15 +74,15 @@ router.delete('/:uid', async (req, res, next) => {
   }
 });
 
-router.post('/register', async (req, res, next) => {
-  req.logger.info(generateLoggerMessage(req));
-  try {
-    const newCart = await CartsController.register(req.body);
-    res.status(201).json(newCart);
-  } catch (error) {
-    next(error);
-  }
-});
+// router.post('/register', async (req, res, next) => {
+//   req.logger.info(generateLoggerMessage(req));
+//   try {
+//     const newCart = await CartsController.register(req.body);
+//     res.status(201).json(newCart);
+//   } catch (error) {
+//     next(error);
+//   }
+// });
 
 
 router.post('/add', async (req, res, next) => {

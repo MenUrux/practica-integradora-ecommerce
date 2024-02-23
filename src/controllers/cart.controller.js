@@ -1,4 +1,3 @@
-import OrderDao from "../dao/order.mongodb.dao.js"
 import UserDao from "../dao/user.mongodb.dao.js"
 import CartMongoDbDao from '../dao/cart.mongodb.dao.js';
 import TicketMongoDbDao from '../dao/ticket.mongodb.dao.js';
@@ -8,15 +7,15 @@ import UserModel from '../dao/models/user.model.js'; // Asegúrate de que la rut
 export default class CartsController {
 
     static async get(filter = {}, opts = {}) {
-        const carts = await OrderDao.get(filter, opts);
-        console.log(`Ordenes encontrados: ${orders.length}`);
+        const carts = await CartMongoDbDao.get(filter, opts);
+        console.log(`Carts encontrados: ${carts.length}`);
         return carts;
     }
 
     static async getById(cid) {
-        const cart = await OrderDao.getById(cid);
+        const cart = await CartMongoDbDao.getById(cid);
         if (cart) {
-            console.log(`Se encontro la orden exitosamente ${JSON.stringify(cart)}`);
+            console.log(`Se encontro el cart exitosamente ${JSON.stringify(cart)}`);
         }
         return cart;
 
@@ -28,8 +27,8 @@ export default class CartsController {
         return cart;
     }
 
-    static async resolve(oid, { status }) {
-        return OrderDao.updateById(oid, { status });
+    static async resolve(cid, { status }) {
+        return CartMongoDbDao.updateById(cid, { status });
 
     }
 
@@ -58,18 +57,15 @@ export default class CartsController {
         }
 
 
-        // Enviar confirmación al usuario
         const user = await UserModel.findById(userId);
-        await sendConfirmation(user.email, order); // proximamente para enviar orden a ig o email
+        // await sendConfirmation(user.email, order); // proximamente para enviar orden a ig o email
 
-        // Generar el ticket
         const ticket = await TicketMongoDbDao.createTicket({
             userId,
             orderId: order._id,
             total,
         });
 
-        // Vaciar el carrito (opcional)
         cart.products = [];
         await cart.save();
 
