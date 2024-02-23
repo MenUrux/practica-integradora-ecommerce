@@ -34,8 +34,13 @@
                 </a>
                 <div class="flex items-center mt-2.5 mb-5">
                     {{#lessorequal this.stock 0}}
-                    <p class="stock z-10 w-full h-full ">Disponibles: Agotado</p>
-                    <button class="no-stock">Agotado</button>
+                    <p class="stock z-10 w-full h-full ">Disponibles: Agotado
+                        <span class="low-stock absolute top-0 left-0 w-full text-center bg-red-600">No disponible</span>
+                    </p>
+                    <button onclick="addProductToCart('{{this._id}}')"
+                        class=" bottom-2 relative right-0  text-gray-900 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-200 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700">
+                        No disponible</button>
+
                     {{else}}
                     {{!-- Chequear si el stock es bajo (10 o menos) --}}
                     {{#lessorequal this.stock 10}}
@@ -46,7 +51,7 @@
                     </p>
                     <button onclick="addProductToCart('{{this._id}}')"
                         class="text-gray-900 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-200 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700">
-                        <i class="fi fi-rr-shopping-cart"></i> Agregar
+                        <i class="fi fi-rr-shopping-cart"></i> Agregar</button>
 
                     </button>
                     {{else}}
@@ -54,10 +59,10 @@
                     <p class="stock">Disponibles: {{this.stock}}</p>
                     <button onclick="addProductToCart('{{this._id}}')"
                         class=" bottom-2 relative right-0  text-gray-900 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-200 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700">
-                        <i class="fi fi-rr-shopping-cart"></i> Agregar
+                        <i class="fi fi-rr-shopping-cart"></i> Agregar</button>
 
-                        {{/lessorequal}}
-                        {{/lessorequal}}
+                    {{/lessorequal}}
+                    {{/lessorequal}}
                 </div>
 
             </div>

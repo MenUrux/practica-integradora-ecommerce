@@ -1,15 +1,17 @@
 import { Router } from 'express';
-import CartsController from '../controllers/carts.controller.js';
-import ProductsController from '../controllers/products.controller.js';
-import TicketsController from '../controllers/tickets.controller.js';
+import CartsController from '../../controllers/cart.controller.js';
+import ProductsController from '../../controllers/product.controller.js';
+import { generateLoggerMessage } from '../../utils/logger.js';
+
+// import TicketsController from '../../controllers/tickets.controller.js';
 
 const router = Router();
 
 router.get('/', async (req, res, next) => {
   req.logger.info(generateLoggerMessage(req));
   try {
-    const users = await CartsController.get({});
-    res.status(200).json(users);
+    const carts = await CartsController.get({});
+    res.status(200).json(carts);
   } catch (error) {
     next(error);
   }
@@ -19,11 +21,11 @@ router.get('/:uid', async (req, res, next) => {
   req.logger.info(generateLoggerMessage(req));
   try {
     const { params: { uid } } = req;
-    const user = await CartsController.getById(uid);
-    if (!user) {
-      return res.status(401).json({ message: `User id ${uid} not found 😨.` });
+    const cart = await CartsController.getById(cid);
+    if (!cart) {
+      return res.status(401).json({ message: `Cart id ${cid} not found 😨.` });
     }
-    res.status(200).json(user);
+    res.status(200).json(cart);
   } catch (error) {
     next(error);
   }
@@ -32,8 +34,8 @@ router.get('/:uid', async (req, res, next) => {
 router.post('/', async (req, res, next) => {
   try {
     const { body } = req;
-    const user = await CartsController.create(body);
-    res.status(201).json(user);
+    const cart = await CartsController.create(body);
+    res.status(201).json(cart);
   } catch (error) {
     next(error);
   }
@@ -43,13 +45,13 @@ router.put('/:uid', async (req, res, next) => {
   req.logger.info(generateLoggerMessage(req));
   try {
     const { body, params: { uid } } = req;
-    const updateResult = await CartsController.update(uid, body);
+    const updateResult = await CartsController.update(cid, body);
     if (updateResult) {
       // Usuario actualizado correctamente, devolver datos actualizados
       res.status(200).json(updateResult);
     } else {
       // Usuario no encontrado
-      res.status(404).json({ message: `User id ${uid} not found 😨.` });
+      res.status(404).json({ message: `Cart id ${cid} not found 😨.` });
     }
   } catch (error) {
     next(error);
@@ -65,7 +67,7 @@ router.delete('/:uid', async (req, res, next) => {
     if (deleteResult) {
       res.status(204).end();
     } else {
-      res.status(404).json({ message: `User id ${uid} not found 😨.` });
+      res.status(404).json({ message: `Cart id ${uid} not found 😨.` });
     }
   } catch (error) {
     next(error);
@@ -75,8 +77,8 @@ router.delete('/:uid', async (req, res, next) => {
 router.post('/register', async (req, res, next) => {
   req.logger.info(generateLoggerMessage(req));
   try {
-    const newUser = await CartsController.register(req.body);
-    res.status(201).json(newUser);
+    const newCart = await CartsController.register(req.body);
+    res.status(201).json(newCart);
   } catch (error) {
     next(error);
   }
@@ -85,12 +87,12 @@ router.post('/register', async (req, res, next) => {
 
 router.post('/add', async (req, res, next) => {
   try {
-    const userId = req.user._id;
+    const cartId = req.cart._id;
     const { productId, quantity } = req.body;
 
-    let cart = await CartMongoDbDao.getByUserId(userId);
+    let cart = await CartMongoDbDao.getById(cartId);
     if (!cart) {
-      cart = await CartMongoDbDao.create({ user: userId, products: [] });
+      cart = await CartMongoDbDao.create({ cart: cartId, products: [] });
     }
 
     const productIndex = cart.products.findIndex(item => item.product.toString() === productId);

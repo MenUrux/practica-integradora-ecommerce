@@ -4,6 +4,7 @@ import JWT from 'jsonwebtoken';
 import passport from 'passport';
 import bcrypt from 'bcrypt';
 import config from '../config/config.js'
+import crypto from 'crypto'
 
 const JWT_SECRET = process.env.JWT_SECRET
 

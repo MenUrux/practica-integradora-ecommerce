@@ -21,7 +21,10 @@ export default class UserMongoDbDao {
         return UserModel.deleteOne(criteria);
     }
 
-    // Convertir en estáticos y corregir referencias a UserModel
+    static async findByEmail(email) {
+        return UserModel.findOne({ email });
+    }
+
     static async updateResetPasswordFields(userId, resetToken, resetExpires) {
         return UserModel.findByIdAndUpdate(userId, {
             resetPasswordToken: resetToken,

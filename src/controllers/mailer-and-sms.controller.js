@@ -39,7 +39,8 @@ class MailerAndSmsController {
         const { email } = req.body;
         console.log(req.body);
         try {
-            const user = await UsersController({ email });
+            const user = await UsersController.findByEmail('men.uru43@gmail.com');
+
             if (!user) {
                 return res.status(404).json({ message: 'User not found.' });
             }

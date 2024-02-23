@@ -1,7 +1,7 @@
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcrypt';
 import dotenv from 'dotenv';
-import CartModel from '../dao/models/cart.model.js';
+import UserModel from '../dao/models/user.model.js';
 
 
 dotenv.config();

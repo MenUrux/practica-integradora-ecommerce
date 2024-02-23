@@ -46,10 +46,8 @@ router.put('/:uid', async (req, res, next) => {
     const { body, params: { uid } } = req;
     const updateResult = await UsersController.update(uid, body);
     if (updateResult) {
-      // Usuario actualizado correctamente, devolver datos actualizados
       res.status(200).json(updateResult);
     } else {
-      // Usuario no encontrado
       res.status(404).json({ message: `User id ${uid} not found 😨.` });
     }
   } catch (error) {
