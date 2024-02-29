@@ -33,6 +33,7 @@ router.get('/products', async (req, res) => {
 
 router.get('/', (req, res) => {
   res.render('index', { title: 'Inicio | Ecommerce', user: req.user ? req.user.toJSON() : null });
+
 });
 
 router.get('/chat', async (req, res) => {

@@ -20,21 +20,54 @@ export default class CartMongoDbDao {
         return CartModel.deleteOne(criteria);
     }
 
-    static async verifyStock(cartId) {
-        const cart = await CartModel.findById(cartId).populate('products.product');
-        let isStockAvailable = true;
+    static async getByUserId(userId) {
+        return CartModel.findOne({ user: userId }).populate('products.product');
+    }
 
-        for (let item of cart.products) {
-            const product = await ProductModel.findById(item.product._id);
-            if (item.quantity > product.stock) {
-                isStockAvailable = false;
-                // Opcionalmente, ajusta la cantidad del producto en el carrito aquí
-                // item.quantity = product.stock;
-            }
+    static async updateById(cartId, updateData) {
+        return CartModel.findByIdAndUpdate(cartId, updateData, { new: true }).populate('products.product');
+    }
+
+    static async getByUserId(userId) {
+        return Cart.findOne({ user: userId }).populate('products.product');
+    }
+
+    static async create(userId) {
+        const cart = new Cart({ user: userId, products: [] });
+        await cart.save();
+        return cart;
+    }
+
+    static async addProductToCart(cartId, productId, quantity) {
+        const cart = await CartModel.findById(cartId);
+        if (!cart) throw new Error('Cart not found');
+
+        const productIndex = cart.products.findIndex(item => item.product.toString() === productId);
+        if (productIndex > -1) {
+            cart.products[productIndex].quantity += quantity;
+        } else {
+            cart.products.push({ product: productId, quantity });
         }
 
         await cart.save();
-        return isStockAvailable;
+        return cart;
     }
 
+    static async removeProductFromCart(cartId, productId, quantity = 1) {
+        const cart = await CartModel.findById(cartId);
+        if (!cart) throw new Error('Cart not found');
+
+        const productIndex = cart.products.findIndex(item => item.product.toString() === productId);
+        if (productIndex > -1) {
+            if (cart.products[productIndex].quantity > quantity) {
+                cart.products[productIndex].quantity -= quantity;
+            } else {
+                cart.products.splice(productIndex, 1);
+            }
+            await cart.save();
+            return cart;
+        } else {
+            throw new Error('Product not found in cart');
+        }
+    }
 }

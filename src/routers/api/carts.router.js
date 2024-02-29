@@ -87,7 +87,11 @@ router.delete('/:uid', async (req, res, next) => {
 
 router.post('/add', async (req, res, next) => {
   try {
+    if (!req.cart) {
+      return res.status(400).json({ error: 'Cart not found' });
+    }
     const cartId = req.cart._id;
+
     const { productId, quantity } = req.body;
 
     let cart = await CartMongoDbDao.getById(cartId);

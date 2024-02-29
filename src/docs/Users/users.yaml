@@ -1,0 +1,180 @@
+openapi: 3.0.0
+info:
+  title: eCommerce API - Usuarios
+  description: API para gestionar un eCommerce, usuarios.
+  version: "1.0.0"
+servers:
+  - url: 'http://localhost:8080/api'
+    description: Servidor dev
+paths:
+  /api/users:
+    get:
+      summary: Obtener todos los usuarios
+      tags:
+        - Users
+      responses:
+        '200':
+          description: Todos los usuarios fueron obtenidos satisfactoriamente desde la base de datos.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/User'
+        '500':
+          description: Error interno del servidor, query defectuosa o fallo de conexión a base de datos.
+    post:
+      summary: Crear un usuario
+      tags:
+        - Users
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                first_name:
+                  type: string
+                  required: true
+                last_name:
+                  type: string
+                email:
+                  type: string
+                  format: email
+                  unique: true
+                  required: true
+                password:
+                  type: string
+                  format: password
+                  required: true
+                age:
+                  type: integer
+                  minimum: 0
+                role:
+                  type: string
+                  default: 'user'
+                  enum:
+                    - user
+                    - admin
+                    - guest
+                resetPasswordToken:
+                  type: string
+                resetPasswordExpires:
+                  type: string
+                  format: date-time
+              required:
+                - first_name
+                - email
+                - password
+      responses:
+        '201':
+          description: Usuario creado satisfactoriamente.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '500':
+          description: Error interno del servidor, query defectuosa o fallo de conexión a base de datos.
+
+
+  /api/users/{uid}:
+    put:
+      summary: Actualizar un usuario
+      tags:
+        - Users
+      parameters:
+        - in: path
+          name: uid
+          required: true
+          schema:
+            type: string
+          description: Identificador único del usuario a actualizar
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                first_name:
+                  type: string
+                last_name:
+                  type: string
+                email:
+                  type: string
+                  format: email
+                password:
+                  type: string
+                  format: password
+                age:
+                  type: integer
+                role:
+                  type: string
+                resetPasswordToken:
+                  type: string
+                resetPasswordExpires:
+                  type: string
+                  format: date-time
+      responses:
+        '200':
+          description: Usuario actualizado satisfactoriamente.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '404':
+          description: Usuario no encontrado.
+        '500':
+          description: Error interno del servidor.
+    delete:
+      summary: Eliminar un usuario
+      tags:
+        - Users
+      parameters:
+        - in: path
+          name: uid
+          required: true
+          schema:
+            type: string
+          description: Identificador único del usuario a eliminar
+      responses:
+        '200':
+          description: Usuario eliminado satisfactoriamente.
+        '404':
+          description: Usuario no encontrado.
+        '500':
+          description: Error interno del servidor.
+
+components:
+  schemas:
+    User:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          readOnly: true
+        first_name:
+          type: string
+        last_name:
+          type: string
+        email:
+          type: string
+          format: email
+        password:
+          type: string
+          format: password
+        age:
+          type: integer
+        role:
+          type: string
+        resetPasswordToken:
+          type: string
+        resetPasswordExpires:
+          type: string
+          format: date-time
+      required:
+        - first_name
+        - email
+        - password

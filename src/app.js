@@ -28,7 +28,16 @@ import mockingRouter from './routers/api/mocking.router.js';
 import { __dirname } from './utils/utils.js';
 import { errorHandlerMiddleware } from './middlewares/error-handler.middleware.js';
 
+import swaggerJsDoc from 'swagger-jsdoc';
+import swaggerUiExpress from 'swagger-ui-express';
+import { swaggerOptions } from './config/swagger.config.js';
+
+
 const app = express();
+
+const specs = swaggerJsDoc(swaggerOptions);
+app.use('/apidocs', swaggerUiExpress.serve, swaggerUiExpress.setup(specs))
+
 const whiteList = process.env.ORIGINS_ALLOWED.split(',');
 console.log(process.env.ORIGINS_ALLOWED);
 

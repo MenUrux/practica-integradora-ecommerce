@@ -1,8 +1,8 @@
 import UserDao from "../dao/user.mongodb.dao.js"
 import CartMongoDbDao from '../dao/cart.mongodb.dao.js';
 import TicketMongoDbDao from '../dao/ticket.mongodb.dao.js';
-import ProductModel from '../dao/models/product.model.js'; // Asegúrate de que la ruta sea correcta
-import UserModel from '../dao/models/user.model.js'; // Asegúrate de que la ruta sea correcta
+import ProductModel from '../dao/models/product.model.js';
+import UserModel from '../dao/models/user.model.js';
 
 export default class CartsController {
 
@@ -23,7 +23,7 @@ export default class CartsController {
 
     static async create(data) {
         const cart = await CartMongoDbDao.create(data);
-        console.log(`Se creo el usuario exitosamente ${JSON.stringify(cart)}`);
+        console.log(`Se creo el carrito exitosamente ${JSON.stringify(cart)}`);
         return cart;
     }
 
@@ -71,4 +71,24 @@ export default class CartsController {
 
         return { success: true, order, ticket };
     }
+
+    static async addToCart(req, res) {
+        try {
+            const userId = req.user._id; // Asegúrate de que req.user esté disponible
+            const { productId, quantity } = req.body;
+
+            let cart = await CartMongoDbDao.getByUserId(userId);
+            if (!cart) {
+                cart = await CartMongoDbDao.create(userId);
+            }
+
+            await CartMongoDbDao.addProductToCart(cart._id, productId, quantity);
+
+            res.status(200).json({ message: 'Product added to cart successfully', cart });
+        } catch (error) {
+            console.error(error);
+            res.status(500).json({ error: 'An error occurred while adding the product to the cart' });
+        }
+    }
+
 }

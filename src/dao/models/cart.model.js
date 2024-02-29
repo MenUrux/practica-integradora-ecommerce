@@ -1,6 +1,5 @@
 import mongoose from 'mongoose';
 
-//Nuevo cart para poder vincularlo a cada usuario
 const CartSchema = new mongoose.Schema({
     user: {
         type: mongoose.Schema.Types.ObjectId,
