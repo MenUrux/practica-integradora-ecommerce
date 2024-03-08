@@ -1,4 +1,3 @@
-const cartId = '65d849ac73ee9cfbf89443d5';
 
 document.addEventListener('DOMContentLoaded', () => {
     const cartButton = document.getElementById('cart-button');

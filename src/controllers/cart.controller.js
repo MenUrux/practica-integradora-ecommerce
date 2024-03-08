@@ -74,7 +74,7 @@ export default class CartsController {
 
     static async addToCart(req, res) {
         try {
-            const userId = req.user._id; // Asegúrate de que req.user esté disponible
+            const userId = req.user._id;
             const { productId, quantity } = req.body;
 
             let cart = await CartMongoDbDao.getByUserId(userId);

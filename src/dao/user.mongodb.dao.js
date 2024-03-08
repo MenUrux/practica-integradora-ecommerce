@@ -21,6 +21,10 @@ export default class UserMongoDbDao {
         return UserModel.deleteOne(criteria);
     }
 
+    static async deleteByEmail(email) {
+        return UserModel.deleteOne({ email: email });
+    }
+
     static async findByEmail(email) {
         return UserModel.findOne({ email });
     }
@@ -42,7 +46,6 @@ export default class UserMongoDbDao {
             throw new Error('Token de restablecimiento de contraseña es inválido o ha expirado.');
         }
 
-        // Hashear la nueva contraseña antes de guardarla
         const salt = await bcrypt.genSalt(10);
         user.password = await bcrypt.hash(newPassword, salt);
         user.resetPasswordToken = undefined;

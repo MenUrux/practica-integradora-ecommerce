@@ -89,7 +89,6 @@ export default class UsersController {
             const { email } = req.body;
             const user = await UserModel.findOne({ email });
             if (!user) {
-                // It's a common practice not to reveal whether an email is registered in the system
                 return res.status(200).json({ message: 'If your email is registered, you will receive a password reset link.' });
             }
 
@@ -103,7 +102,6 @@ export default class UsersController {
 
             // Send the password reset email
             const resetLink = `http://yourdomain.com/reset-password/${resetToken}`;
-            // (Assuming you have a function sendPasswordResetEmail to handle email sending)
             await sendPasswordResetEmail(user.email, resetLink);
 
             res.status(200).json({ message: 'Password reset link has been sent if your email is registered.' });

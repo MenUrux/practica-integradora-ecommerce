@@ -17,10 +17,10 @@ router.get('/', async (req, res, next) => {
   }
 });
 
-router.get('/:uid', async (req, res, next) => {
+router.get('/:cid', async (req, res, next) => {
   req.logger.info(generateLoggerMessage(req));
   try {
-    const { params: { uid } } = req;
+    const { params: { cid } } = req;
     const cart = await CartsController.getById(cid);
     if (!cart) {
       return res.status(401).json({ message: `Cart id ${cid} not found 😨.` });
@@ -41,10 +41,10 @@ router.post('/', async (req, res, next) => {
   }
 });
 
-router.put('/:uid', async (req, res, next) => {
+router.put('/:cid', async (req, res, next) => {
   req.logger.info(generateLoggerMessage(req));
   try {
-    const { body, params: { uid } } = req;
+    const { body, params: { cid } } = req;
     const updateResult = await CartsController.update(cid, body);
     if (updateResult) {
       // Usuario actualizado correctamente, devolver datos actualizados
@@ -59,15 +59,15 @@ router.put('/:uid', async (req, res, next) => {
 });
 
 
-router.delete('/:uid', async (req, res, next) => {
+router.delete('/:cid', async (req, res, next) => {
   req.logger.info(generateLoggerMessage(req));
   try {
-    const { params: { uid } } = req;
-    const deleteResult = await CartsController.delete(uid);
+    const { params: { cid } } = req;
+    const deleteResult = await CartsController.delete(cid);
     if (deleteResult) {
       res.status(204).end();
     } else {
-      res.status(404).json({ message: `Cart id ${uid} not found 😨.` });
+      res.status(404).json({ message: `Cart id ${cid} not found 😨.` });
     }
   } catch (error) {
     next(error);
@@ -87,34 +87,23 @@ router.delete('/:uid', async (req, res, next) => {
 
 router.post('/add', async (req, res, next) => {
   try {
-    if (!req.cart) {
-      return res.status(400).json({ error: 'Cart not found' });
+    const userId = req.user._id; // Asegúrate de que el usuario esté autenticado y se pueda obtener su ID
+    let cart = await CartMongoDbDao.getByUserId(userId); // Obtener el carrito por el ID del usuario
+    if (!cart) {
+      cart = await CartMongoDbDao.create({ user: userId, products: [] }); // Crear un carrito si no existe
     }
-    const cartId = req.cart._id;
 
     const { productId, quantity } = req.body;
 
-    let cart = await CartMongoDbDao.getById(cartId);
-    if (!cart) {
-      cart = await CartMongoDbDao.create({ cart: cartId, products: [] });
-    }
+    await CartMongoDbDao.addProductToCart(cart._id, productId, quantity); // Añadir el producto al carrito
 
-    const productIndex = cart.products.findIndex(item => item.product.toString() === productId);
-    if (productIndex !== -1) {
-
-      cart.products[productIndex].quantity += quantity;
-    } else {
-      cart.products.push({ product: productId, quantity: quantity });
-    }
-
-    await CartMongoDbDao.updateById(cart._id, { products: cart.products });
-
-    res.status(200).json({ message: 'Product added to cart successfully' });
+    res.status(200).json({ message: 'Product added to cart successfully', cartId: cart._id });
   } catch (error) {
     console.error(error);
     next(error);
   }
 });
+
 
 
 
