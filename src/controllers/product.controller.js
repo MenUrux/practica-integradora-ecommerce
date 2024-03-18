@@ -3,36 +3,36 @@ import ProductDao from '../dao/product.mongodb.dao.js';
 export default class ProductsController {
 
     static async get(filter = {}, opts = {}) {
-        const users = await ProductDao.get(filter, opts);
-        console.log(`Usuarios encontrados: ${users.length}`);
-        return users;
+        const product = await ProductDao.get(filter, opts);
+        console.log(`Productos encontrados: ${product.length}`);
+        return product;
     }
 
     static async getById(uid) {
-        const user = await ProductDao.getById(uid);
-        if (user) {
-            console.log(`Se encontro el usuario exitosamente ${JSON.stringify(user)}`);
+        const product = await ProductDao.getById(uid);
+        if (product) {
+            console.log(`Se encontro el producto exitosamente ${JSON.stringify(product)}`);
         }
-        return user;
+        return product;
     }
 
     static async create(data) {
-        const user = await ProductDao.create(data);
-        console.log(`Se creo el usuario exitosamente ${JSON.stringify(user)}`);
-        return user;
+        const product = await ProductDao.create(data);
+        console.log(`Se creo el producto exitosamente ${JSON.stringify(product)}`);
+        return product;
     }
 
-    static async update(uid, data) {
-        const updateResult = await ProductDao.updateById(uid, data);
+    static async update(pid, data) {
+        const updateResult = await ProductDao.updateById(pid, data);
         if (updateResult.modifiedCount === 0) {
             return null;
         }
-        const updatedUser = await ProductDao.getById(uid);
+        const updatedUser = await ProductDao.getById(pid);
         return updatedUser;
     }
 
-    static async delete(uid) {
-        const deleteResult = await ProductDao.deleteById(uid);
+    static async delete(pid) {
+        const deleteResult = await ProductDao.deleteById(pid);
         if (deleteResult) {
             console.log(`Usuario eliminado exitosamente.`);
         }

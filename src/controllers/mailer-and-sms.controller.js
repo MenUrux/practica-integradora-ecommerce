@@ -2,6 +2,7 @@ import { generateResetToken } from '../utils/utils.js';
 import { generatePurchaseConfirmationHTML, recoveryPassHTML, attachmentPath } from '../utils/emailTemplates.js';
 import { client as clientTwilio, transport as nodemailerTransport } from '../config/nodemailer-and-twilio.config.js';
 import UsersController from '../controllers/users.controller.js';
+import OrderController from '../controllers/orders.controller.js';
 
 
 class MailerAndSmsController {
@@ -39,7 +40,7 @@ class MailerAndSmsController {
         const { email } = req.body;
         console.log(req.body);
         try {
-            const user = await UsersController.findByEmail('men.uru43@gmail.com');
+            const user = await UsersController.findByEmail(email);
 
             if (!user) {
                 return res.status(404).json({ message: 'User not found.' });
@@ -47,14 +48,13 @@ class MailerAndSmsController {
 
             const { resetToken } = generateResetToken();
             user.passwordResetToken = resetToken;
-            user.passwordResetExpires = Date.now() + 3600000; // 1 hora en milisegundos
+            user.passwordResetExpires = Date.now() + 3600000;
             await user.save();
 
             const resetURL = `${req.protocol}://${req.get('host')}/reset-password/${resetToken}`;
             const emailHTML = recoveryPassHTML({
-                userName: user.first_name || 'User', // Ajustado para un campo hipotético 'firstName'
+                userName: user.first_name || 'Usuario',
                 resetURL,
-                siteUrl
             });
 
             const result = await nodemailerTransport.sendMail({

@@ -3,7 +3,10 @@ import multer from 'multer';
 import path from 'path';
 import fs from 'fs';
 import productController from '../../controllers/product.controller.js';
-import { __dirname, ecommerceName } from '../../utils/utils.js';
+import { __dirname, ecommerceName, buildResponsePaginated, siteUrl } from '../../utils/utils.js';
+import ProductModel from '../../dao/models/product.model.js';
+
+
 
 const router = Router();
 const uploadsDir = path.join(__dirname, '../public/uploads/');
@@ -21,6 +24,32 @@ const storage = multer.diskStorage({
 });
 
 const upload = multer({ storage: storage });
+
+router.get('/products', async (req, res) => {
+  const { limit = 12, page = 1, sort, search } = req.query;
+
+  const criteria = {};
+  const options = { limit, page };
+
+  if (sort) {
+    options.sort = { price: sort };
+  }
+
+  if (search) {
+    criteria.category = search;
+  }
+
+  try {
+    const result = await ProductModel.paginate(criteria, options);
+    const data = buildResponsePaginated({ ...result, search, sort }, siteUrl, search);
+    res.render('products', { title: 'Productos | Ecommerce', ...data, user: req.user ? req.user.toJSON() : null });
+  } catch (error) {
+    console.error(error);
+    res.status(500).send('Error interno del servidor');
+  }
+});
+
+
 
 router.post('/products', upload.single('thumbnail'), async (req, res) => {
   try {
@@ -61,10 +90,6 @@ router.get('/products/:pid', async (req, res, next) => {
   } catch (error) {
     next(error);
   }
-});
-
-router.get('/login', (req, res) => {
-  res.render('login', { title: `Iniciar sesión | ${ecommerceName}`, messageError: 'Correo o contraseña inválidos.' });
 });
 
 

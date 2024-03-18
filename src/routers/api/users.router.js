@@ -55,6 +55,7 @@ router.put('/:uid', async (req, res, next) => {
   }
 });
 
+// Poner premium a un usuario
 router.put('/premium/:uid', async (req, res, next) => {
   req.logger.info(generateLoggerMessage(req));
   try {

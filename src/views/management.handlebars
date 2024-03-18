@@ -1,0 +1,51 @@
+<h1>Gestión de Productos</h1>
+
+<!-- Opcional: Formulario para añadir un nuevo producto -->
+<section>
+    <h2>Añadir Nuevo Producto</h2>
+    <form action="/api/products" method="POST" enctype="multipart/form-data">
+        <input type="text" name="title" placeholder="Título" required>
+        <input type="text" name="description" placeholder="Descripción" required>
+        <input type="number" name="price" placeholder="Precio" required>
+        <input type="text" name="category" placeholder="Categoría" required>
+        <input type="number" name="stock" placeholder="Stock" required>
+        <input type="text" name="code" placeholder="Código" required>
+        <input type="file" name="thumbnail" accept="image/*" required>
+        <button type="submit">Añadir Producto</button>
+    </form>
+</section>
+
+<!-- Tabla para listar y gestionar productos existentes -->
+<form action="/management" method="get">
+    <input type="text" name="search" placeholder="Buscar por nombre" value="{{search}}">
+    <button type="submit">Buscar</button>
+</form>
+<section>
+    <h2 class="text-center text-3xl">Productos Existentes</h2>
+    <table class="border-collapse w-full">
+        <thead>
+            <tr>
+                <th>Título</th>
+                <th>Precio</th>
+                <th>Categoría</th>
+                <th>Stock</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            {{#each payload}}
+            <tr>
+                <td>{{this.title}}</td>
+                <td>${{this.price}}</td>
+                <td>{{this.category}}</td>
+                <td>{{this.stock}}</td>
+                <td>
+                    <a href="/products/edit/{{this._id}}">Editar</a>
+                    <a href="/products/delete/{{this._id}}"
+                        onclick="return confirm('¿Estás seguro de querer eliminar este producto?');">Eliminar</a>
+                </td>
+            </tr>
+            {{/each}}
+        </tbody>
+    </table>
+</section>

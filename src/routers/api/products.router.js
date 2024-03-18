@@ -3,10 +3,11 @@ import { buildResponsePaginated } from '../../utils/utils.js'
 import ProductModel from '../../dao/models/product.model.js'
 import CustomError from '../../utils/CustomError.js'
 import EnumsError from '../../utils/EnumsError.js'
-import { generatorIdError, generatorProductError } from '../../utils/CauseMessageError.js';
-import ProductMongoDbDao from '../../dao/product.mongodb.dao.js';
+import { generatorProductError } from '../../utils/CauseMessageError.js';
 import { generateLoggerMessage } from '../../utils/logger.js';
 import ProductsController from '../../controllers/product.controller.js';
+// import isPremium from '../../middlewares/error-handler.middleware.js'
+
 
 const router = Router();
 

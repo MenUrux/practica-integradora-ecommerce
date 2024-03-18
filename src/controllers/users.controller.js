@@ -27,6 +27,14 @@ export default class UsersController {
         return user;
     }
 
+    static async findByEmail(email) {
+        const user = await UserDao.findByEmail(email);
+        if (user) {
+            console.log(`Se encontro el usuario exitosamente ${JSON.stringify(user)}`);
+        }
+        return user;
+    }
+
     static async create(data) {
         const user = await UserDao.create(data);
         console.log(`Se creo el usuario exitosamente ${JSON.stringify(user)}`);
@@ -52,22 +60,18 @@ export default class UsersController {
 
     static async login(req, res) {
         try {
-
             const { email, password } = req.body;
-
-            try {
-                const user = await UserModel.findOne({ email });
-                if (!user || !isValidPassword(password, user)) {
-                    return res.status(401).json({ message: 'Usuario o contraseña inválidos' });
-                }
-
-                const token = generateToken(user);
-                res.status(200).json({ access_token: token });
-            } catch (error) {
-                res.status(500).json({ message: 'Error interno del servidor.' });
+            const user = await UserModel.findOne({ email });
+            if (!user || !isValidPassword(password, user)) {
+                return res.status(401).json({ message: 'Usuario o contraseña inválidos' });
             }
+            console.log(`userxxxxxxxx: `, user)
+            await UserModel.findByIdAndUpdate(user._id, { last_connection: new Date() });
+
+            const token = generateToken(user);
+            res.status(200).json({ access_token: token });
         } catch (error) {
-            return res.status(500).send('Error al iniciar sesión.');
+            res.status(500).json({ message: 'Error interno del servidor.' });
         }
     }
 
@@ -76,11 +80,15 @@ export default class UsersController {
     }
 
     static async logout(req, res) {
-        req.session.destroy((err) => {
+        const userId = req.user._id;
+        console.log(userId)
+        req.session.destroy(async (err) => {
             if (err) return res.status(500).send('Error al cerrar sesión.');
+
+            await UserModel.findByIdAndUpdate(userId, { last_connection: new Date() });
+
             res.send('Sesión cerrada con éxito.');
         });
-
     }
 
 
@@ -109,7 +117,6 @@ export default class UsersController {
             res.status(500).json({ message: 'Internal server error.' });
         }
     }
-
 
 
 }

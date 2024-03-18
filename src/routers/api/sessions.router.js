@@ -12,11 +12,7 @@ router.post('/register', passport.authenticate('register', { failureRedirect: '/
 })
 
 router.post('/login', passport.authenticate('login', { failureRedirect: '/login' }), async (req, res) => {
-
     req.session.user = req.user;
-    console.log('req.user login', req.user);
-    console.log('req.session.user login', req.session.user);
-
     res.redirect('/profile');
 });
 
@@ -34,12 +30,9 @@ router.get('/logout', async (req, res) => {
     req.session.destroy((error) => {
         if (error) {
             return res.render('error', ({ title: 'Error | Ecommerce', messageError: error.message }))
-
         }
     })
     res.redirect('/login');
-
-
 });
 
 router.get('/github', passport.authenticate('github', { scope: ['user:email'] }));

@@ -38,7 +38,8 @@ const initializePassport = () => {
       if (!user || !isValidPassword(password, user)) {
         return done(new Error('Correo o contraseña invalidos.'));
       }
-      return done(null, user);
+      const updatedUser = await UserModel.findByIdAndUpdate(user._id, { last_connection: new Date() }, { new: true });
+      return done(null, updatedUser);
     } catch (error) {
       return done(error);
     }

@@ -42,7 +42,7 @@ export function generatePurchaseConfirmationHTML({ userName, purchaseNumber }) {
 
 
 
-export function recoveryPassHTML({ userName, resetURL, siteUrl }) {
+export function recoveryPassHTML({ userName, resetURL }) {
   return `
     <table align="center" width="100%" cellpadding="0" cellspacing="0" border="0">
       <tr>
@@ -55,14 +55,10 @@ export function recoveryPassHTML({ userName, resetURL, siteUrl }) {
             </tr>
             <tr>
               <td align="center" style="padding: 10px; font-family: Arial, sans-serif; font-size: 16px; mso-height-rule: exactly; line-height: 20px; color: #555555;">
-              Tu enlace para restablecer la contraseña
+              Tu enlace para restablecer la contraseña:<br>
+              <a style="text-decoration: underline;" href="${resetURL}">${resetURL}</a>
               </td>
             </tr>
-            <tr>
-            <td align="center" style="padding: 10px; font-family: Arial, sans-serif; font-size: 16px; mso-height-rule: exactly; line-height: 20px; color: #555555;">
-            Para restablecer tu contraseña, por favor haz clic en el siguiente enlace: <a href="${resetURL}">Restablecer Contraseña</a>
-            </td>
-          </tr>
           <tr>
             <td align="center" style="padding: 10px;">
               <a href="${siteUrl}" target="_blank">

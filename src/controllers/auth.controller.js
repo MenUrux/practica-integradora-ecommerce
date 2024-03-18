@@ -12,10 +12,8 @@ class AuthController {
             if (!user) {
                 return res.status(404).json({ message: 'User not found.' });
             }
-
-            // Utiliza el TokenService para generar el token
             const { resetToken, expires } = generateResetToken();
-            user.passwordResetToken = resetToken; // Aquí estamos guardando el token directamente
+            user.passwordResetToken = resetToken;
             user.passwordResetExpires = expires;
             await user.save();
 
@@ -25,7 +23,8 @@ class AuthController {
                 from: process.env.EMAIL_NODEEMAILER,
                 to: user.email,
                 subject: 'Reset your password - Ecommerce',
-                html: recoveryPassHTML
+                html: `¡Hey!, aquí tienes para poder realizar la recuperación de cuenta!
+                ${resetURL}`
             });
 
             res.status(201).json({ message: 'Password reset email sent successfully.', result });

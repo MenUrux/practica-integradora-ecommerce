@@ -46,6 +46,9 @@
       {{#if (eq user.role 'admin')}}
       <li class="nav-item transition-all hover:scale-110"><a href="/add-product" class="nav-link">Admin panel</a></li>
       {{/if}}
+      {{#if (eq user.role 'premium')}}
+      <li class="nav-item transition-all hover:scale-110"><a href="/add-product" class="nav-link">Admin panel</a></li>
+      {{/if}}
       <li hidden class="nav-item transition-all hover:scale-110"><a href="/chat" class="nav-link">Chat</a></li>
       {{!-- <li class="nav-item transition-all hover:scale-110"><a href="/profile" data-tooltip={{#if user}}"Iniciaste
           sesión como: {{user.first_name}} {{user.last_name}} {{#if (eq user.role 'admin' )}}- ADMIN{{/if}}"

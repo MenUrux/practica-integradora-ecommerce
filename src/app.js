@@ -21,6 +21,8 @@ import notificationsRouter from './routers/api/notifications.router.js';
 import userViewRouter from './routers/views/users.router.js';
 import sessionsRouter from './routers/api/sessions.router.js';
 
+import managementViewRouter from './routers/views/management.router.js';
+
 import debugRouter from './routers/views/debug.router.js';
 import loggersRouter from './routers/api/loggers.router.js';
 import mockingRouter from './routers/api/mocking.router.js';
@@ -64,7 +66,7 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 app.use(addLogger)
-app.use('/', indexRouter, userViewRouter, debugRouter, productsViewRouter);
+app.use('/', indexRouter, userViewRouter, debugRouter, productsViewRouter, managementViewRouter);
 app.use('/api/loggerTest', loggersRouter);
 app.use('/api/mockingproducts', mockingRouter);
 app.use('/api/auth', authRouter);
