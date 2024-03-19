@@ -27,6 +27,8 @@ router.get('/me', async (req, res) => {
 });
 
 router.get('/logout', async (req, res) => {
+    const user = req.session.user;
+    await UserModel.findByIdAndUpdate(user._id, { last_connection: new Date() }, { new: true });
     req.session.destroy((error) => {
         if (error) {
             return res.render('error', ({ title: 'Error | Ecommerce', messageError: error.message }))
