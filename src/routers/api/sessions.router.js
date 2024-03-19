@@ -13,6 +13,8 @@ router.post('/register', passport.authenticate('register', { failureRedirect: '/
 
 router.post('/login', passport.authenticate('login', { failureRedirect: '/login' }), async (req, res) => {
     req.session.user = req.user;
+    const user = req.session.user;
+    await UserModel.findByIdAndUpdate(user._id, { last_connection: new Date() }, { new: true });
     res.redirect('/profile');
 });
 
@@ -42,6 +44,7 @@ router.get('/github', passport.authenticate('github', { scope: ['user:email'] })
 router.get('/github/callback', passport.authenticate('github', { failureRedirect: '/login' }), (req, res) => {
     console.log('req.user', req.user);
     req.session.user = req.user;
+
     res.redirect('/profile');
 });
 
