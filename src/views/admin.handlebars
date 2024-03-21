@@ -16,7 +16,7 @@
 </section>
 
 <!-- Tabla para listar y gestionar productos existentes -->
-<form action="/management" method="get">
+<form action="/admin" method="get">
     <input type="text" name="search" placeholder="Buscar por nombre" value="{{search}}">
     <button type="submit">Buscar</button>
 </form>
@@ -25,7 +25,6 @@
     <table class="border-collapse w-full">
         <thead>
             <tr>
-                <th>Imágen</th>
                 <th>Título</th>
                 <th>Precio</th>
                 <th>Categoría</th>
@@ -36,18 +35,16 @@
         <tbody>
             {{#each payload}}
             <tr>
-                <td class="flex justify-center"><img src="{{this.thumbnail}}" alt="{{this.title}}"
-                        class="h-12 w-12 object-cover"></td>
                 <td>{{this.title}}</td>
                 <td>${{this.price}}</td>
                 <td>{{this.category}}</td>
                 <td>{{this.stock}}</td>
-                <td class="flex justify-evenly">
+                <td>
                     <button type="button" onclick="openEditModal('{{this._id}}')"
-                        class="text-indigo-600 hover:text-indigo-900 transition-colors">
+                        class="text-indigo-600 hover:text-indigo-900">
                         Editar
                     </button>
-                    <a href="#" class="text-red-600 hover:text-red-900 transition-colors"
+                    <a href="#"
                         onclick="return confirm('¿Estás seguro de querer eliminar este producto?');">Eliminar</a>
                 </td>
             </tr>

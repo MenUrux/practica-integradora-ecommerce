@@ -26,7 +26,8 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage: storage });
 
-router.get('/management', async (req, res) => {
+
+router.get('/admin', async (req, res) => {
   const { limit = 20, page = 1, sort, search } = req.query;
 
   const criteria = {};
@@ -44,14 +45,12 @@ router.get('/management', async (req, res) => {
     const result = await ProductModel.paginate(criteria, options);
     const data = buildResponsePaginated({ ...result, search, sort }, siteUrl, search);
     console.table(data.payload)
-    res.render('management', { title: `Administración ${ecommerceName}`, ...data, user: req.user ? req.user.toJSON() : null });
+    res.render('admin', { title: `Administración ${ecommerceName}`, ...data, user: req.user ? req.user.toJSON() : null });
   } catch (error) {
     console.error(error);
     res.status(500).send('Error interno del servidor');
   }
 });
-
-
 
 
 export default router;

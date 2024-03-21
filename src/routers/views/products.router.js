@@ -42,7 +42,7 @@ router.get('/products', async (req, res) => {
   try {
     const result = await ProductModel.paginate(criteria, options);
     const data = buildResponsePaginated({ ...result, search, sort }, siteUrl, search);
-    res.render('products', { title: 'Productos | Ecommerce', ...data, user: req.user ? req.user.toJSON() : null });
+    res.render('products', { title: `Productos | ${ecommerceName}`, ...data, user: req.user ? req.user.toJSON() : null });
   } catch (error) {
     console.error(error);
     res.status(500).send('Error interno del servidor');

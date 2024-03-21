@@ -37,7 +37,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
 
-async function loadCart() {
+/* async function loadCart() {
     const response = await fetch(`api/carts/${cartId}`);
     const cart = await response.json();
     let totalQuantity = 0;
@@ -72,7 +72,7 @@ async function loadCart() {
     document.getElementById('cart-total-items').innerText = `${totalQuantity}`;
 }
 
-loadCart();
+loadCart(); */
 
 
 
