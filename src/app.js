@@ -60,7 +60,6 @@ app.use(cors(
         methods: ['GET', 'POST', 'PUT', 'DELETE']
     }
 ));
-app.use(sessionConfig);
 
 initPassport();
 app.use(passport.initialize());

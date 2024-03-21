@@ -1,5 +1,5 @@
-import { generateResetToken } from '../utils/utils.js';
-import { generatePurchaseConfirmationHTML, recoveryPassHTML, attachmentPath } from '../utils/emailTemplates.js';
+import { ecommerceName, generateResetToken } from '../utils/utils.js';
+import { generatePurchaseConfirmationHTML, recoveryPassHTML, welcomeUser, attachmentPath } from '../utils/emailTemplates.js';
 import { client as clientTwilio, transport as nodemailerTransport } from '../config/nodemailer-and-twilio.config.js';
 import UsersController from '../controllers/users.controller.js';
 import OrderController from '../controllers/orders.controller.js';
@@ -20,7 +20,7 @@ class MailerAndSmsController {
             const result = await nodemailerTransport.sendMail({
                 from: process.env.EMAIL_NODEEMAILER,
                 to: email,
-                subject: 'Click n Shop - Gracias por tu compra!',
+                subject: `Gracias por tu compra! - ${ecommerceName}`,
                 html: emailHTML,
                 attachments: [{
                     filename: 'banner.png',
@@ -60,7 +60,7 @@ class MailerAndSmsController {
             const result = await nodemailerTransport.sendMail({
                 from: process.env.EMAIL_NODEEMAILER,
                 to: user.email,
-                subject: 'Reset your password - Ecommerce',
+                subject: `Reset your password - ${ecommerceName}`,
                 html: emailHTML,
                 attachments: [{
                     filename: 'banner.png',
@@ -70,6 +70,31 @@ class MailerAndSmsController {
             });
 
             res.status(201).json({ message: 'Password reset email sent successfully.', result });
+        } catch (error) {
+            next(error);
+        }
+    }
+
+
+    static async sendWelcomeEmail({ user }, res, next) {
+        const { first_name, email } = user;
+
+        try {
+            const emailHTML = welcomeUser({ userName: first_name });
+
+            const result = await nodemailerTransport.sendMail({
+                from: process.env.EMAIL_NODEEMAILER,
+                to: email,
+                subject: `¡Bienvenido a ${ecommerceName}! - ${ecommerceName}`,
+                html: emailHTML,
+                attachments: [{
+                    filename: 'banner.png',
+                    path: attachmentPath,
+                    cid: 'banner'
+                }]
+            });
+
+            console.log(result);
         } catch (error) {
             next(error);
         }

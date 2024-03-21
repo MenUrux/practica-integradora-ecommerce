@@ -2,14 +2,42 @@ import { Router } from 'express';
 import passport from 'passport';
 import UserModel from '../../dao/models/user.model.js';
 import { createHash, isValidPassword } from '../../utils/utils.js'
+import NotificationsController from '../../controllers/mailer-and-sms.controller.js';
 
 const router = Router();
 
-router.post('/register', passport.authenticate('register', { failureRedirect: '/register' }), async (req, res) => {
-    console.log('req.user register', req.user);
-    res.redirect('/profile');
+/* router.post('/register', passport.authenticate('register', { failureRedirect: '/register' }), async (req, res, next) => {
+    try {
+        res.cookie('registered', 'true', { maxAge: 900000, httpOnly: false });
 
-})
+        console.log('req.user register', req.user);
+        const { first_name, email } = req.user;
+        await NotificationsController.sendWelcomeEmail({
+            user: { first_name, email }
+        }, res, next);
+        res.json({ success: true, message: "Registro exitoso." });
+    } catch (error) {
+        res.status(500).json({ success: false, message: "Error en el registro." });
+    }
+}); */
+
+router.post('/register', (req, res, next) => {
+    passport.authenticate('register', (err, user, info) => {
+        if (err) {
+            return res.status(400).json({ success: false, message: err.message });
+        }
+        if (!user) {
+            return res.status(400).json({ success: false, message: info.message });
+        }
+        req.logIn(user, (loginErr) => {
+            if (loginErr) {
+                return res.status(400).json({ success: false, message: loginErr.message });
+            }
+            return res.json({ success: true, message: "Registro exitoso." });
+        });
+    })(req, res, next);
+});
+
 
 router.post('/login', passport.authenticate('login', { failureRedirect: '/login' }), async (req, res) => {
     req.session.user = req.user;
