@@ -85,7 +85,7 @@ router.get('/products/:pid', async (req, res, next) => {
         error: { status: 404, stack: 'Producto no encontrado' }
       });
     } else {
-      res.render('product', { title: `${product.title} | ${ecommerceName}`, product: product.toJSON() });
+      res.render('product', { title: `${product.title} | ${ecommerceName}`, user: req.user ? req.user.toJSON() : null, product: product.toJSON() });
     }
   } catch (error) {
     next(error);

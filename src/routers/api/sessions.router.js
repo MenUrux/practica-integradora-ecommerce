@@ -40,14 +40,22 @@ router.get('/me', async (req, res) => {
 
 router.get('/logout', async (req, res) => {
     const user = req.session.user;
-    await UserModel.findByIdAndUpdate(user._id, { last_connection: new Date() }, { new: true });
+    if (user && user._id) {
+        try {
+            await UserModel.findByIdAndUpdate(user._id, { last_connection: new Date() }, { new: true });
+        } catch (error) {
+            return res.render('error', ({ title: 'Error | Ecommerce', messageError: error.message }));
+        }
+    }
+
     req.session.destroy((error) => {
         if (error) {
-            return res.render('error', ({ title: 'Error | Ecommerce', messageError: error.message }))
+            return res.render('error', ({ title: 'Error | Ecommerce', messageError: error.message }));
         }
-    })
-    res.redirect('/login');
+        res.redirect('/login');
+    });
 });
+
 
 router.get('/github', passport.authenticate('github', { scope: ['user:email'] }));
 
