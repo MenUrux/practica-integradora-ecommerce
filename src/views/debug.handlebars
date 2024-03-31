@@ -12,24 +12,20 @@
 </div>
 
 <script>
-  document.getElementById('notificationForm').addEventListener('submit', function (e) {
+  document.getElementById('notificationForm').addEventListener('submit', function(e) {
     e.preventDefault();
-
     fetch('/api/notifications/mail', {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-      })
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({})
     })
-      .then(response => response.json())
-      .then(data => {
-        document.getElementById('message').innerText = data.message;
-      })
-      .catch((error) => {
-        console.error('Error:', error);
-        document.getElementById('message').innerText = 'Error al enviar la notificación.';
-      });
+    .then(response => response.json())
+    .then(data => {
+      document.getElementById('message').innerText = data.message;
+    })
+    .catch(error => {
+      console.error('Error:', error);
+      document.getElementById('message').innerText = 'Error al enviar la notificación.';
+    });
   });
 </script>

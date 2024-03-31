@@ -1,23 +1,21 @@
 <h1>Gestión de Productos</h1>
 
-<!-- Opcional: Formulario para añadir un nuevo producto -->
 <section>
     <h2>Añadir Nuevo Producto</h2>
     <form action="/api/products" method="POST" enctype="multipart/form-data">
-        <input type="text" name="title" placeholder="Título" required>
-        <input type="text" name="description" placeholder="Descripción" required>
-        <input type="number" name="price" placeholder="Precio" required>
-        <input type="text" name="category" placeholder="Categoría" required>
-        <input type="number" name="stock" placeholder="Stock" required>
-        <input type="text" name="code" placeholder="Código" required>
-        <input type="file" name="thumbnail" accept="image/*" required>
+        <input type="text" name="title" placeholder="Título" required />
+        <input type="text" name="description" placeholder="Descripción" required />
+        <input type="number" name="price" placeholder="Precio" required />
+        <input type="text" name="category" placeholder="Categoría" required />
+        <input type="number" name="stock" placeholder="Stock" required />
+        <input type="text" name="code" placeholder="Código" required />
+        <input type="file" name="thumbnail" accept="image/*" required />
         <button type="submit">Añadir Producto</button>
     </form>
 </section>
 
-<!-- Tabla para listar y gestionar productos existentes -->
 <form action="/management" method="get">
-    <input type="text" name="search" placeholder="Buscar por nombre" value="{{search}}">
+    <input type="text" name="search" placeholder="Buscar por nombre" value="{{search}}" />
     <button type="submit">Buscar</button>
 </form>
 <section>
@@ -39,19 +37,22 @@
                 data-url="/products/{{this._id}}">
 
                 <td class="flex justify-center">
-                    <img src="{{this.thumbnail}}" alt="{{this.title}}" class="h-12 w-12 object-cover">
+                    <img src="{{this.thumbnail}}" alt="{{this.title}}" class="h-12 w-12 object-cover" />
                 </td>
                 <td>{{this.title}}</td>
                 <td>${{this.price}}</td>
                 <td>{{this.category}}</td>
                 <td>{{this.stock}}</td>
-                <td class="flex justify-evenly items-center">
+                <td>
+                    <div class="flex justify-evenly items-center">
+
                     <button type="button" onclick="openEditModal('{{this._id}}', event)"
                         class="text-indigo-600 hover:text-indigo-900 transition-colors">
                         Editar
                     </button>
                     <button type="button" class="text-red-600 hover:text-red-900 transition-colors"
                         onclick="deleteProduct('{{this._id}}', event)">Eliminar</button>
+                    </div>
                 </td>
             </tr>
             {{/each}}
@@ -70,7 +71,7 @@
                                 <div class="mt-3 w-full text-center sm:mt-0 sm:ml-4 sm:text-left">
                                     <h3 class="text-lg leading-6 font-medium text-gray-900" id="modal-title">Editar
                                         Producto</h3>
-                                    <div class="mt-2 flex flex-col ">
+                                    <div class="mt-2 flex flex-col">
                                         <form id="editProductForm" class="flex flex-col w-full">
                                             <label for="editProductId">Id: (no se puede modificar)</label>
                                             <input type="text" disabled id="editProductId" class="text-gray-600" />
@@ -116,7 +117,7 @@
                                 <div class="mt-3 w-full text-center sm:mt-0 sm:ml-4 sm:text-left">
                                     <h3 class="text-lg leading-6 font-medium text-gray-900" id="modal-title">Editar
                                         Producto</h3>
-                                    <div class="mt-2 flex flex-col ">
+                                    <div class="mt-2 flex flex-col">
                                         <form id="editProductForm" class="flex flex-col w-full">
                                             <label for="editProductId">Id: (no se puede modificar)</label>
                                             <input type="text" disabled id="editProductId" class="text-gray-600" />
@@ -147,83 +148,68 @@
                 </div>
             </div>
 
-
-
         </tbody>
     </table>
 </section>
 
 <script>
-    // Función para abrir el modal de edición con los datos del producto
+    // Función para abrir el modal de edición con los datos del producto async
     async function openEditModal(productId) {
-        event.stopPropagation();
-        try {
-            console.log(productId)
+        event.stopPropagation(); try {
+            console.log(productId);
             const response = await fetch(`/api/products/${productId}`);
             if (!response.ok) {
-                throw new Error('Error al obtener los datos del producto');
+                throw new
+                    Error('Error al obtener los datos del producto');
             }
             const product = await response.json();
-
-            console.log(response)
-
+            console.log(response);
             document.getElementById('editProductId').value = product._id;
             document.getElementById('editTitle').value = product.title;
             document.getElementById('editPrice').value = product.price;
             document.getElementById('editCategory').value = product.category;
             document.getElementById('editStock').value = product.stock;
             document.getElementById('editCode').value = product.code;
-
-            // Mostrar el modal
             document.getElementById('editProductModal').classList.remove('hidden');
-        } catch (error) {
-            console.error('Error al cargar los datos del producto:', error);
+        }
+        catch (error) {
+            console.error('Error al cargar los datos del producto:',
+                error);
         }
     }
 
     async function deleteProduct(productId) {
         event.stopPropagation();
         try {
-            console.log(productId)
+            console.log(productId);
             const response = await fetch(`/api/products/${productId}`);
             if (!response.ok) {
-                throw new Error('Error al obtener los datos del producto');
-            }
-            const product = await response.json();
-
+                throw new
+                    Error('Error al obtener los datos del producto');
+            };
+            const product = await
+                response.json();
             console.log(response)
-
-            document.getElementById('editTitle').value = product.title;
-
-
-            // Mostrar el modal
+            document.getElementById('editTitle').value = product.title; // Mostrar el modal
             document.getElementById('editProductModal').classList.remove('hidden');
         } catch (error) {
-            console.error('Error al cargar los datos del producto:', error);
+            console.error('Error al cargar los datos del producto:',
+                error);
         }
-    }
-
-
-    // Función para cerrar el modal ARREGLAR ESTO
+    } 
+    // Función para cerrar el modal ARREGLAR ESTO function
     function closeModal() {
         document.getElementById('editProductModal').classList.add('hidden');
-
     }
-
     function submitEditForm() {
         event.stopPropagation();
         const form = document.getElementById('editProductForm');
-        const productId = document.getElementById('editProductId').value;
-
-
-
-        closeModal(); // Cierra el modal después de enviar los datos
+        const productId = document.getElementById('editProductId').value; closeModal(); // Cierra el modal después de enviar los datos
     }
-
     document.querySelectorAll('.clickable-row').forEach(row => {
         row.addEventListener('click', () => {
-            const url = row.getAttribute('data-url');
-            window.location.href = url;
+            const url =
+                row.getAttribute('data-url'); window.location.href = url;
         });
     });
 </script>

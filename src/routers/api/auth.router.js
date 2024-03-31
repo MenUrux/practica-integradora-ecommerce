@@ -44,9 +44,8 @@ router.get('/current', authMiddleware('jwt'), authRolesMiddleware('admin'), (req
 
 router.post('/reset-password/request', MailerAndSmsController.sendPasswordResetEmail);
 
-/* router.post('/reset-password/:token', UsersController.resetPassword); */
 
-/* router.post('/reset-password/:token', async (req, res) => {
+router.post('/reset-password/:token', async (req, res) => {
   const { password } = req.body;
   const { token } = req.params;
   try {
@@ -55,7 +54,7 @@ router.post('/reset-password/request', MailerAndSmsController.sendPasswordResetE
   } catch (error) {
     res.status(500).send(error.message);
   }
-}); */
+});
 
 
 

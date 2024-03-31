@@ -27,25 +27,25 @@ const upload = multer({ storage: storage });
 
 router.get('/products', async (req, res) => {
   const { limit = 12, page = 1, sort, search } = req.query;
-
   const criteria = {};
-  const options = { limit, page };
-
-  if (sort) {
-    options.sort = { price: sort };
-  }
+  const options = {
+    limit: parseInt(limit, 10),
+    page: parseInt(page, 10),
+    sort: sort ? { price: sort } : {}
+  };
 
   if (search) {
-    criteria.category = search;
+    criteria.title = { $regex: search, $options: 'i' }; // Busca de forma insensible a mayúsculas y minúsculas
   }
 
   try {
     const result = await ProductModel.paginate(criteria, options);
-    const data = buildResponsePaginated({ ...result, search, sort }, siteUrl, search);
+    const data = buildResponsePaginated({ ...result, sort, search }, siteUrl, search, sort);
     res.render('products', { title: `Productos | ${ecommerceName}`, ...data, user: req.user ? req.user.toJSON() : null });
+
   } catch (error) {
-    console.error(error);
-    res.status(500).send('Error interno del servidor');
+    console.error("Error al realizar la búsqueda de productos: ", error);
+    res.status(500).send("Error interno del servidor");
   }
 });
 

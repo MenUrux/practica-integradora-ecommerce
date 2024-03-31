@@ -19,7 +19,9 @@ import productsRouter from './routers/api/products.router.js';
 import productsViewRouter from './routers/views/products.router.js';
 import notificationsRouter from './routers/api/notifications.router.js';
 import userViewRouter from './routers/views/users.router.js';
+import authViewRouter from './routers/views/auth.router.js';
 import sessionsRouter from './routers/api/sessions.router.js';
+import documentsRouter from './routers/api/documents.router.js';
 
 import managementViewRouter from './routers/views/management.router.js';
 
@@ -66,12 +68,13 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 app.use(addLogger)
-app.use('/', indexRouter, adminRouter, userViewRouter, debugRouter, productsViewRouter, managementViewRouter);
+app.use('/', indexRouter, adminRouter, userViewRouter, debugRouter, productsViewRouter, managementViewRouter, authViewRouter);
 app.use('/api/loggerTest', loggersRouter);
 app.use('/api/mockingproducts', mockingRouter);
 app.use('/api/auth', authRouter);
 app.use('/api/sessions', sessionsRouter);
 app.use('/api/users', usersRouter);
+app.use('/api/documents', documentsRouter);
 app.use('/api/carts', cartsRouter);
 app.use('/api/products', productsRouter);
 app.use('/api/notifications', notificationsRouter);

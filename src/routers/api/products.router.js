@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { buildResponsePaginated } from '../../utils/utils.js'
+import { buildResponsePaginated, siteUrl } from '../../utils/utils.js'
 import ProductModel from '../../dao/models/product.model.js'
 import CustomError from '../../utils/CustomError.js'
 import EnumsError from '../../utils/EnumsError.js'
@@ -11,28 +11,32 @@ import ProductsController from '../../controllers/product.controller.js';
 
 const router = Router();
 
-const baseUrl = 'http://localhost:8080/'
 
 
 router.get('/', async (req, res) => {
   req.logger.info(generateLoggerMessage(req));
-  const { limit = 8, page = 1, sort, search } = req.query;
+  const { limit = 12, page = 1, sort, search } = req.query;
   const criteria = {};
-  const options = { limit, page };
-
-  if (sort) {
-    options.sort = { price: sort };
-  }
+  const options = {
+    limit: parseInt(limit, 10),
+    page: parseInt(page, 10),
+    sort: sort ? { price: sort } : {}
+  };
 
   if (search) {
-    criteria.category = search;
+    criteria.title = { $regex: search, $options: 'i' }; // Busca de forma insensible a mayúsculas y minúsculas
   }
 
-  const result = await ProductModel.paginate(criteria, options);
-
-  const data = buildResponsePaginated({ ...result, sort, search }, baseUrl, search, sort);
-  res.status(200).json(data);
+  try {
+    const result = await ProductModel.paginate(criteria, options);
+    const data = buildResponsePaginated({ ...result, sort, search }, siteUrl, search, sort);
+    res.status(200).json(data);
+  } catch (error) {
+    console.error("Error al realizar la búsqueda de productos: ", error);
+    res.status(500).send("Error interno del servidor");
+  }
 });
+
 
 router.get('/:pid', async (req, res, next) => {
   req.logger.info(generateLoggerMessage(req));

@@ -2,13 +2,21 @@
 <h4>Hola {{user.first_name}}, éstas son nuestras últimas novedades...
 </h4>
 {{/if}}
-<h1 class="text-white text-4xl text-center">Productos</h1>
+<div class="flex items-center justify-center relative">
+    <h1 class="text-white text-4xl text-center">Productos</h1>
+    <form class="absolute right-0" action="/products" method="GET">
+        <input class="text-black" type="text" name="search" placeholder="Buscar producto...">
+        <button
+            class="text-nowrap text-white bg-gradient-to-r from-purple-500 via-purple-600 to-purple-700 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-purple-300 dark:focus:ring-purple-800 shadow-lg shadow-purple-500/50 dark:shadow-lg dark:shadow-purple-800/80 font-medium rounded-lg text-sm px-5 py-2.5 text-center"
+            type="submit"><i class="fi fi-rr-search"> </i>Buscar</button>
+    </form>
+</div>
 
-<div class="container mx-auto p-4">
+<div class="container mx-auto p-4 min-h-[60vh]">
     <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4">
         {{#each payload}}
         <div
-            class="bg-white border border-gray-200 rounded-lg shadow overflow-hidden dark:bg-gray-800 dark:border-gray-700 relative">
+            class="bg-white border border-gray-200 rounded-lg shadow overflow-hidden dark:bg-gray-800 dark:border-gray-700 relative h-96">
             <div class="aspect-w-1 aspect-h-1 overflow-clip relative">
                 <a href="/products/{{this._id}}">
                     {{#if this.thumbnail}}
@@ -16,7 +24,7 @@
 
 
                     <div role="status"
-                        class="text-center aspect-w-1 aspect-h-1 aspect-square w-full h-full max-w-md max-h-md m-auto z-10 flex items-center justify-center">
+                        class="text-center aspect-w-1 aspect-h-1 aspect-square w-full h-full max-w-md max-h-md m-auto flex items-center justify-center">
                         <svg aria-hidden="true"
                             class=" w-12 h-12 text-gray-200 animate-spin dark:text-gray-600 fill-purple-600"
                             viewBox="0 0 100 101" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -31,16 +39,16 @@
                     </div>
 
 
-                    <img class="hidden article-image object-cover rounded-t-lg w-full h-full aspect-square bg-red-50 transition-transform  hover:scale-110 z-[5]"
+                    <img class="hidden article-image object-cover rounded-t-lg w-full h-full aspect-square bg-red-50 transition-transform  hover:scale-110 {{#lessorequal this.stock 0}} blur-[2px] {{/lessorequal}}"
                         src="{{this.thumbnail}}" alt="{{this.title}}">
 
                     {{else}}
                     <!-- Si no hay imagen, mostrar imagen predeterminada -->
 
                     <div role="status"
-                        class="text-center aspect-w-1 aspect-h-1 aspect-square w-1/2 h-1/2 max-w-md max-h-md m-auto z-10">
+                        class="text-center aspect-w-1 aspect-h-1 aspect-square w-1/2 h-1/2 max-w-md max-h-md m-auto ">
                         <svg aria-hidden="true"
-                            class=" w-12 h-12 text-gray-200 animate-spin dark:text-gray-600 fill-purple-600 z-10"
+                            class=" w-12 h-12 text-gray-200 animate-spin dark:text-gray-600 fill-purple-600"
                             viewBox="0 0 100 101" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <path
                                 d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z"
@@ -53,53 +61,54 @@
                     </div>
 
 
-                    <img class="hidden article-image object-cover rounded-t-lg w-full h-full aspect-square bg-red-50 transition-transform  hover:scale-110 z-[5]"
+                    <img class="hidden article-image object-cover rounded-t-lg w-full h-full aspect-square bg-red-50 transition-transform  hover:scale-110 {{#lessorequal this.stock 0}} blur-sm {{/lessorequal}}"
                         src="/assets/image/no-image.jpg" alt="No Image">
                     {{/if}}
                 </a>
             </div>
-            <div class="p-3">
+            <div class="p-1">
                 <a href="/products/{{this._id}}" class="product-detail-link">
-                    {{!-- <a href="javascript:void(0);" class="product-detail-link" data-product-id="{{this._id}}"> --}}
-                        Ver
-                        detalles
-                        {{!-- </a> --}}
-
+                    <span>Ver detalles</span>
                     <h5 class="text-xl font-semibold tracking-tight text-gray-900 dark:text-white">
                         {{ this.title }}
                     </h5>
                 </a>
                 <div class="flex items-center mt-2.5 mb-5">
                     {{#lessorequal this.stock 0}}
-                    <p class="stock">Disponibles: Agotado
-                        <span class="low-stock absolute top-0 left-0 w-full text-center bg-red-600">No disponible</span>
-                    </p>
+                    <span class="low-stock absolute top-0 left-0 w-full text-center bg-red-600">No disponible</span>
+                    <p class="stock text-wrap w-1/2">Disponibles: Agotado</p>
                     <button onclick="addProductToCart('{{this._id}}')"
-                        class=" bottom-2 relative right-0  text-gray-900 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-200 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700">
+                        class="absolute right-1 bottom-1 text-nowrap cursor-not-allowed text-gray-900 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-200 font-medium rounded-lg text-sm px-5 py-2.5  dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700">
                         No disponible</button>
 
                     {{else}}
                     {{!-- Chequear si el stock es bajo (10 o menos) --}}
                     {{#lessorequal this.stock 10}}
-                    <p class="stock">
+                    <span class="low-stock absolute top-0 left-0 w-full text-center bg-red-600">¡Últimas
+                        unidades!</span>
+                    <p class="stock text-wrap w-1/2">
                         Disponibles: {{this.stock}}
-                        <span class="low-stock absolute top-0 left-0 w-full text-center bg-red-600">¡Últimas
-                            unidades!</span>
                     </p>
                     <button onclick="addProductToCart('{{this._id}}')"
-                        class="text-gray-900 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-200 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700">
+                        class="absolute right-1 bottom-1 text-nowrap  text-gray-900 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-200 font-medium rounded-lg text-sm px-5 py-2.5  dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700">
                         <i class="fi fi-rr-shopping-cart"></i> Agregar</button>
 
                     </button>
                     {{else}}
                     {{!-- Caso para cuando hay suficiente stock --}}
-                    <p class="stock">Disponibles: {{this.stock}}</p>
+                    <p class="stock text-wrap w-1/2">Disponibles: {{this.stock}}</p>
                     <button onclick="addProductToCart('{{this._id}}')"
-                        class=" bottom-2 relative right-0  text-gray-900 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-200 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700">
+                        class="absolute right-1 bottom-1 text-nowrap  text-gray-900 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-200 font-medium rounded-lg text-sm px-5 py-2.5  dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700">
                         <i class="fi fi-rr-shopping-cart"></i> Agregar</button>
 
                     {{/lessorequal}}
                     {{/lessorequal}}
+                    <div class="flex gap-2 justify-end">
+                        <h6
+                            class="absolute left-1 bottom-1 text-nowrap text-xl italic tracking-tight text-gray-900 dark:text-white">
+                            ${{ this.price }}
+                        </h6>
+                    </div>
                 </div>
 
             </div>
@@ -120,16 +129,14 @@
     </span>
     <!-- Buttons -->
     <div class="inline-flex mt-2 gap-4 xs:mt-0">
-        <a class="flex items-center justify-center px-3 h-8 text-sm font-medium text-white bg-gray-800 rounded-s hover:bg-gray-900 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
+        <a class="flex transition-colors items-center justify-center px-3 h-8 text-sm font-medium text-white bg-gray-800 rounded-sm hover:bg-gray-900 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
             href="{{this.prevLink}}" role="button" {{#unless hasPrevPage}}disabled{{/unless}}>Anterior</a>
-        <a class="flex items-center justify-center px-3 h-8 text-sm font-medium text-white bg-gray-800 rounded-s hover:bg-gray-900 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
+        <a class="flex transition-colors  items-center justify-center px-3 h-8 text-sm font-medium text-white bg-gray-800 rounded-sm hover:bg-gray-900 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
             href="{{this.nextLink}}" role="button" {{#unless hasNextPage}}disabled{{/unless}}>Siguiente</a>
     </div>
 </div>
 
-
-{{!--
-<script src="/js/products.js"></script> --}}
+<script src="/js/products.js"></script>
 
 <script>
 
@@ -162,7 +169,7 @@
         });
     });
 
-    /* document.addEventListener('DOMContentLoaded', () => {
+    document.addEventListener('DOMContentLoaded', () => {
         document.querySelectorAll('.product-detail-link').forEach(item => {
             item.addEventListener('click', function () {
                 const productId = this.getAttribute('data-product-id');
@@ -182,6 +189,6 @@
             });
         });
     });
-    */
+
 
 </script>

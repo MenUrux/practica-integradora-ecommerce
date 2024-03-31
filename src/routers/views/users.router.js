@@ -13,6 +13,11 @@ router.get('/login', (req, res) => {
   res.render('login', { title: `Iniciar sesión | ${ecommerceName}`, messageError: 'Correo o contraseña inválidos.' });
 });
 
+router.get('/recover', (req, res) => {
+  res.render('recover', { title: `Recuperar contraseña | ${ecommerceName}`, messageError: 'Ups, ha sucedido un error' });
+});
+
+
 
 router.get('/profile', (req, res) => {
   if (!req.session.user) {

@@ -97,25 +97,65 @@ export default class UsersController {
             const { email } = req.body;
             const user = await UserModel.findOne({ email });
             if (!user) {
-                return res.status(200).json({ message: 'If your email is registered, you will receive a password reset link.' });
+                return res.status(200).json({ message: 'Si estás registrado, recibiras un correo para recuperar la contraseña..' });
             }
 
-            // Generate a unique token for password reset
             const resetToken = crypto.randomBytes(20).toString('hex');
-            // Set the token's expiration time (e.g., 1 hour)
-            const expireAt = Date.now() + 3600000; // 1 hour from now
+            const expireAt = Date.now() + 3600000;
 
-            // Update the user's record with the reset token and its expiration time
             await UserModel.updateOne({ _id: user._id }, { resetToken, expireAt });
 
-            // Send the password reset email
             const resetLink = `http://yourdomain.com/reset-password/${resetToken}`;
             await sendPasswordResetEmail(user.email, resetLink);
 
-            res.status(200).json({ message: 'Password reset link has been sent if your email is registered.' });
+            res.status(200).json({ message: 'Por favor, verifica tu correo electrónico.' });
         } catch (error) {
-            res.status(500).json({ message: 'Internal server error.' });
+            res.status(500).json({ message: 'Error interno del servidor.' });
         }
+    }
+
+    static async addDocumentsToUser(uid, userDocuments) {
+        const user = await this.getById(uid);
+
+        user.documents.push(...userDocuments);
+
+        await user.save();
+
+        return user;
+    }
+
+
+    static async updateToPremium(uid) {
+        const user = await this.getById(uid);
+        if (!user) {
+            throw new Error('Usuario no encontrado');
+        }
+
+        if (user.role === 'admin') {
+            throw new Error('No puedes cambiar el rol a un usuario administrador.');
+        }
+
+        const requiredDocuments = ['Identificación', 'Comprobante de domicilio', 'Comprobante de estado de cuenta'];
+        const hasAllDocuments = requiredDocuments.every(docName =>
+            user.documents.some(doc => doc.name === docName)
+        );
+        if (hasAllDocuments) {
+            user.role = 'premium';
+            await user.save();
+            return user;
+        } else {
+            throw new Error('No se ha terminado de procesar toda la documentación necesaria.');
+        }
+    }
+
+    static async updateUserAvatar(uid, avatarPath) {
+        const user = await UserModel.findByIdAndUpdate(uid, { avatar: avatarPath }, { new: true });
+
+        if (!user) {
+            throw new Error('Usuario no encontrado');
+        }
+
+        return user;
     }
 
 

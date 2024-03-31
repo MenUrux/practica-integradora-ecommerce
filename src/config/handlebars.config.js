@@ -1,4 +1,5 @@
 import handlebars from 'express-handlebars';
+import moment from 'moment';
 
 const hbs = handlebars.create({
     defaultLayout: 'main',
@@ -19,6 +20,9 @@ const hbs = handlebars.create({
         eq: function (a, b) {
             return a === b;
         },
+        formatDate: function (datetime) {
+            return moment(datetime).format('YYYY-MM-DD HH:mm:ss');
+        }
         // otros helpers...
     }
 });

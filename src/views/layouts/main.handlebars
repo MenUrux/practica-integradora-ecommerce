@@ -20,7 +20,7 @@
   </div>
 
 
-  <div id="overlay" class="fixed inset-0 bg-black bg-opacity-50 invisible">
+  <div id="overlay" class="fixed inset-0 bg-black bg-opacity-50 invisible z-[1]">
   </div>
 
   <div id="cart-container"
@@ -149,17 +149,10 @@
       </li> --}}
 
       <li class="nav-item transition-all hover:scale-110">
-        <a class="{{#if user}}
-      text-green-400
-      {{/if}}
-
-       {{#if (eq user.role 'premium')}}
-       text-blue-600
-       {{/if}}
-
-       {{#if (eq user.role 'admin')}}
-       text-yellow-400
-       {{/if}}
+        <a class="
+        {{#if (eq user.role 'user')}} text-[#942aff] {{/if}}
+       {{#if (eq user.role 'premium')}} text-[#1a88ff] {{/if}}
+       {{#if (eq user.role 'admin')}} text-[#f64c38] {{/if}}
       " href="/profile">
           <i class="fi fi-rr-user icon "></i></a>
       </li>
@@ -171,18 +164,15 @@
     <a href="/debug" class="navbar-brand text-2xl">debug</a>
     {{/if}}
   </nav>
-  <main class="container text-white p-8 mx-auto min-h-screen flex flex-col">
+  <main class="container text-white p-8 mx-auto min-h-[80vh] flex flex-col">
     {{{body}}}
   </main>
-
-
-
 
   <footer class="bg-white dark:bg-gray-900">
     <div class="mx-auto w-full max-w-screen-xl p-4 py-6 lg:py-8">
       <div class="md:flex md:justify-between">
         <div class="mb-6 md:mb-0">
-          <a href="https://flowbite.com/" class="flex items-center">
+          <a href='/' class="flex items-center">
             <img src="../assets/image/logoVerticalWhite.png" class="h-20 me-3" alt="Click n' Shop Logo" />
           </a>
         </div>

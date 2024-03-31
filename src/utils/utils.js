@@ -3,8 +3,39 @@ import url from 'url';
 import JWT from 'jsonwebtoken';
 import passport from 'passport';
 import bcrypt from 'bcrypt';
-import config from '../config/config.js'
-import crypto from 'crypto'
+import config from '../config/config.js';
+import crypto from 'crypto';
+import multer from 'multer';
+
+const storage = multer.diskStorage({
+    destination: function (req, file, cb) {
+        let folder = '';
+        switch (file.fieldname) {
+            case 'profile':
+                folder = 'profiles';
+                break;
+            case 'product':
+                folder = 'products';
+                break;
+            case 'identificacion':
+            case 'comprobanteDomicilio':
+            case 'estadoCuenta':
+                folder = 'documents';
+                break;
+            default:
+                folder = 'misc';
+                break;
+        }
+
+        cb(null, path.join(__dirname, 'uploads', folder));
+    },
+    filename: function (req, file, cb) {
+        cb(null, file.fieldname + '-' + Date.now() + path.extname(file.originalname));
+    }
+});
+
+export const upload = multer({ storage: storage });
+
 
 const JWT_SECRET = process.env.JWT_SECRET
 

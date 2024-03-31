@@ -1,16 +1,98 @@
-<div class="mx-auto bg-white shadow-md border min-w-[30rem] border-gray-200 rounded-lg p-4 sm:p-6 lg:p-8 dark:bg-gray-800 dark:border-gray-700
-  flex flex-col gap-3
-  ">
-  <h2 class="self-center">Tus datos:</h2>
+<div
+  class="mx-auto bg-white shadow-md border min-w-[30rem] border-gray-200 rounded-lg p-4 sm:p-6 lg:p-8 dark:bg-gray-800 dark:border-gray-700 flex flex-col gap-3">
+  <h2 class="self-center text-3xl">Mi perfil:</h2>
+  <form id="avatar" action="/api/users/{{user._id}}/avatar" method="post" enctype="multipart/form-data"
+    style="display: none;">
+    <input type="file" id="avatar" name="profile" accept="image/*">
+  </form>
+  <img id="profilePicture" class="self-center rounded-full w-24 h-24 border object-cover shadow-lg 
+  {{#if (eq user.role 'user')}}bg-[#942aff] border-[#942aff] shadow-[#942aff]{{/if}}
+  {{#if (eq user.role 'admin')}}bg-[#f64c38] border-[#f64c38] shadow-[#f64c38] {{/if}}
+  {{#if (eq user.role 'premium')}}bg-[#1a88ff] border-[#1a88ff] shadow-[#1a88ff] {{/if}}"
+    src="{{#if user.avatar}}{{user.avatar}}{{else}}/assets/image/no-avatar.png{{/if}}"
+    alt="{{user.first_name}} {{user.last_name}}" onclick="document.getElementById('avatar').click();">
   <p><strong>Nombre: </strong>{{user.first_name}}</p>
+  {{#if user.last_name}} 
   <p><strong>Apellido: </strong>{{user.last_name}}</p>
+  {{/if}}
   <p><strong>Email: </strong>{{user.email}}</p>
   <p><strong>Edad: </strong>{{user.age}}</p>
   <p><strong>Tu rol: </strong>{{user.role}}</p>
-  <p><strong>Documentos: </strong>{{user.documents}}</p>
-  <p><strong>Ultima conexion: </strong>{{user.last_connection}}</p>
+
+  <p><strong>Ultima conexion: </strong>{{formatDate user.last_connection}}</p>
   {{!-- <p><strong>Nombre: </strong>{{user.first_name}}</p> --}}
+  <hr />
+  {{#if (eq user.role 'premium')}} 
+  {{#if user.documents}}
+  <p><strong><i class="fi fi-rr-clip"></i> Documentos ya adjuntos: </strong></p>
+  <ul>
+    {{#each user.documents}}
+    <li class="list-disc">{{this.name}}</li>
+    {{/each}}
+  </ul>
+  <p class="italic">Ya tienes permiso para gestionar tus productos en nuestro sitio.</p>
   <hr>
-  <a href="/api/sessions/logout" class="focus:outline-none text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900
-    self-end w-max" role="button"><i class="fi fi-rr-exit"> </i>Cerrar sesión</a>
+  {{/if}}
+  {{/if}}
+  {{#if (eq user.role 'user')}}
+  <p>¿Quieres ser vendedor?, adjunta tus documentos para verificarte.</p>
+
+
+  <form action="/api/users/{{user._id}}/documents" method="post" enctype="multipart/form-data">
+    <div>
+      <label for="identificacion">Identificación:</label>
+      <input type="file" id="identificacion" name="identificacion" required>
+    </div>
+
+    <div>
+      <label for="comprobanteDomicilio">Comprobante de Domicilio:</label>
+      <input type="file" id="comprobanteDomicilio" name="comprobanteDomicilio" required>
+    </div>
+
+    <div>
+      <label for="estadoCuenta">Comprobante de Estado de Cuenta:</label>
+      <input type="file" id="estadoCuenta" name="estadoCuenta" required>
+    </div>
+
+    <button type="submit">Subir Documentos</button>
+  </form>
+  <hr />
+  {{/if}}
+
+
+  <a href="/api/sessions/logout"
+    class="focus:outline-none text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900 self-end w-max"
+    role="button"><i class="fi fi-rr-exit"> </i>Cerrar sesión</a>
 </div>
+
+<script>
+  async function uploadFiles() {
+    const input = document.getElementById('fileInput');
+    const data = new FormData();
+
+    for (const file of input.files) {
+      data.append('files', file);
+    }
+
+    const response = await fetch('/upload', {
+      method: 'POST',
+      body: data,
+    });
+
+    const result = await response.json();
+
+    const container = document.getElementById('fileNames');
+    container.innerHTML = '';
+    result.uploadedFiles.forEach(name => {
+      const element = document.createElement('div');
+      element.textContent = name.payload;
+      container.appendChild(element);
+    });
+  }
+
+  document.getElementById('profilePicture').addEventListener('change', function () {
+    if (this.files && this.files[0]) {
+      document.getElementById('avatar').submit();
+    }
+  });
+</script>

@@ -2,146 +2,173 @@
 
 <!-- Opcional: Formulario para añadir un nuevo producto -->
 <section>
-    <h2>Añadir Nuevo Producto</h2>
-    <form action="/api/products" method="POST" enctype="multipart/form-data">
-        <input type="text" name="title" placeholder="Título" required>
-        <input type="text" name="description" placeholder="Descripción" required>
-        <input type="number" name="price" placeholder="Precio" required>
-        <input type="text" name="category" placeholder="Categoría" required>
-        <input type="number" name="stock" placeholder="Stock" required>
-        <input type="text" name="code" placeholder="Código" required>
-        <input type="file" name="thumbnail" accept="image/*" required>
-        <button type="submit">Añadir Producto</button>
-    </form>
+  <h2>Añadir Nuevo Producto</h2>
+  <form action="/api/products" method="POST" enctype="multipart/form-data">
+    <input type="text" name="title" placeholder="Título" required />
+    <input type="text" name="description" placeholder="Descripción" required />
+    <input type="number" name="price" placeholder="Precio" required />
+    <input type="text" name="category" placeholder="Categoría" required />
+    <input type="number" name="stock" placeholder="Stock" required />
+    <input type="text" name="code" placeholder="Código" required />
+    <input type="file" name="thumbnail" accept="image/*" required />
+    <button type="submit">Añadir Producto</button>
+  </form>
 </section>
 
 <!-- Tabla para listar y gestionar productos existentes -->
 <form action="/admin" method="get">
-    <input type="text" name="search" placeholder="Buscar por nombre" value="{{search}}">
-    <button type="submit">Buscar</button>
+  <input
+    type="text"
+    name="search"
+    placeholder="Buscar por nombre"
+    value="{{search}}"
+  />
+  <button type="submit">Buscar</button>
 </form>
 <section>
-    <h2 class="text-center text-3xl">Productos Existentes</h2>
-    <table class="border-collapse w-full">
-        <thead>
-            <tr>
-                <th>Título</th>
-                <th>Precio</th>
-                <th>Categoría</th>
-                <th>Stock</th>
-                <th>Acciones</th>
-            </tr>
-        </thead>
-        <tbody>
-            {{#each payload}}
-            <tr>
-                <td>{{this.title}}</td>
-                <td>${{this.price}}</td>
-                <td>{{this.category}}</td>
-                <td>{{this.stock}}</td>
-                <td>
-                    <button type="button" onclick="openEditModal('{{this._id}}')"
-                        class="text-indigo-600 hover:text-indigo-900">
-                        Editar
-                    </button>
-                    <a href="#"
-                        onclick="return confirm('¿Estás seguro de querer eliminar este producto?');">Eliminar</a>
-                </td>
-            </tr>
-            {{/each}}
-            <div id="editProductModal" class="fixed z-10 inset-0 overflow-y-auto hidden" aria-labelledby="modal-title"
-                role="dialog" aria-modal="true">
+  <h2 class="text-center text-3xl">Productos Existentes</h2>
+  <table class="border-collapse w-full">
+    <thead>
+      <tr>
+        <th>Título</th>
+        <th>Precio</th>
+        <th>Categoría</th>
+        <th>Stock</th>
+        <th>Acciones</th>
+      </tr>
+    </thead>
+    <tbody>
+      {{#each payload}}
+        <tr>
+          <td>{{this.title}}</td>
+          <td>${{this.price}}</td>
+          <td>{{this.category}}</td>
+          <td>{{this.stock}}</td>
+          <td>
+            <button
+              type="button"
+              onclick="openEditModal('{{this._id}}')"
+              class="text-indigo-600 hover:text-indigo-900"
+            >
+              Editar
+            </button>
+            <a
+              href="#"
+              onclick="return confirm('¿Estás seguro de querer eliminar este producto?');"
+            >Eliminar</a>
+          </td>
+        </tr>
+      {{/each}}
+      <div
+        id="editProductModal"
+        class="fixed z-10 inset-0 overflow-y-auto hidden"
+        aria-labelledby="modal-title"
+        role="dialog"
+        aria-modal="true"
+      >
+        <div
+          class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0 text-gray-400"
+        >
+          <div
+            class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity text-gray-400"
+            aria-hidden="true"
+          ></div>
+
+          <span
+            class="hidden sm:inline-block sm:align-middle sm:h-screen"
+            aria-hidden="true"
+          >&#8203;</span>
+          <div
+            class="inline-block align-bottom bg-stone-500 rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full"
+          >
+            <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+              <div class="sm:flex sm:items-start">
                 <div
-                    class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0 text-gray-400">
-                    <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity text-gray-400"
-                        aria-hidden="true"></div>
-
-                    <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
-                    <div
-                        class="inline-block align-bottom bg-stone-500 rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
-                        <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
-                            <div class="sm:flex sm:items-start">
-                                <div class="mt-3 w-full text-center sm:mt-0 sm:ml-4 sm:text-left">
-                                    <h3 class="text-lg leading-6 font-medium text-gray-900" id="modal-title">Editar
-                                        Producto</h3>
-                                    <div class="mt-2 flex flex-col ">
-                                        <form id="editProductForm" class="flex flex-col w-full">
-                                            <label for="editProductId">Id: (no se puede modificar)</label>
-                                            <input type="text" disabled id="editProductId" class="text-gray-600" />
-                                            <label for="editTitle">Titulo</label>
-                                            <input class="text-gray-600" type="text" id="editTitle" />
-                                            <label for="editPrice">Precio</label>
-                                            <input class="text-gray-600" type="number" id="editPrice" />
-                                            <label for="editStock">Stock</label>
-                                            <input class="text-gray-600" type="number" id="editStock" />
-                                            <label for="editCategory">Categoría</label>
-                                            <input class="text-gray-600" type="text" id="editCategory" />
-                                            <label for="editCode">Código</label>
-                                            <input class="text-gray-600" type="text" id="editCode" />
-                                        </form>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
-                            <button type="button"
-                                class="mt-3 w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-blue-500 text-base font-medium text-white hover:bg-blue-700 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm"
-                                onclick="submitEditForm()">Guardar</button>
-                            <button type="button"
-                                class="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm"
-                                onclick="closeModal()">Cancelar</button>
-                        </div>
-                    </div>
+                  class="mt-3 w-full text-center sm:mt-0 sm:ml-4 sm:text-left"
+                >
+                  <h3
+                    class="text-lg leading-6 font-medium text-gray-900"
+                    id="modal-title"
+                  >Editar Producto</h3>
+                  <div class="mt-2 flex flex-col">
+                    <form id="editProductForm" class="flex flex-col w-full">
+                      <label for="editProductId">Id: (no se puede modificar)</label>
+                      <input
+                        type="text"
+                        disabled
+                        id="editProductId"
+                        class="text-gray-600"
+                      />
+                      <label for="editTitle">Titulo</label>
+                      <input class="text-gray-600" type="text" id="editTitle" />
+                      <label for="editPrice">Precio</label>
+                      <input
+                        class="text-gray-600"
+                        type="number"
+                        id="editPrice"
+                      />
+                      <label for="editStock">Stock</label>
+                      <input
+                        class="text-gray-600"
+                        type="number"
+                        id="editStock"
+                      />
+                      <label for="editCategory">Categoría</label>
+                      <input
+                        class="text-gray-600"
+                        type="text"
+                        id="editCategory"
+                      />
+                      <label for="editCode">Código</label>
+                      <input class="text-gray-600" type="text" id="editCode" />
+                    </form>
+                  </div>
                 </div>
+              </div>
             </div>
+            <div
+              class="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse"
+            >
+              <button
+                type="button"
+                class="mt-3 w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-blue-500 text-base font-medium text-white hover:bg-blue-700 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm"
+                onclick="submitEditForm()"
+              >Guardar</button>
+              <button
+                type="button"
+                class="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm"
+                onclick="closeModal()"
+              >Cancelar</button>
+            </div>
+          </div>
+        </div>
+      </div>
 
-
-        </tbody>
-    </table>
+    </tbody>
+  </table>
 </section>
 
 <script>
-    // Función para abrir el modal de edición con los datos del producto
-    async function openEditModal(productId) {
-        try {
-            console.log(productId)
-            const response = await fetch(`/api/products/${productId}`);
-            if (!response.ok) {
-                throw new Error('Error al obtener los datos del producto');
-            }
-            const product = await response.json();
-
-            console.log(response)
-
-            // Llenar el formulario en el modal con los datos del producto
-            document.getElementById('editProductId').value = product._id;
-            document.getElementById('editTitle').value = product.title;
-            document.getElementById('editPrice').value = product.price;
-            document.getElementById('editCategory').value = product.category;
-            document.getElementById('editStock').value = product.stock;
-            document.getElementById('editCode').value = product.code;
-            // Completa con el resto de campos según necesites
-
-            // Mostrar el modal
-            document.getElementById('editProductModal').classList.remove('hidden');
-        } catch (error) {
-            console.error('Error al cargar los datos del producto:', error);
-            // Manejar el error adecuadamente, por ejemplo, mostrando un mensaje al usuario
-        }
-    }
-
-
-    // Función para cerrar el modal
-    function closeModal() {
-        document.getElementById('editProductModal').classList.add('hidden');
-    }
-
-    function submitEditForm() {
-        const form = document.getElementById('editProductForm');
-        const productId = document.getElementById('editProductId').value;
-
-
-
-        closeModal(); // Cierra el modal después de enviar los datos
-    }
+  // Función para abrir el modal de edición con los datos del producto async
+  function openEditModal(productId) { try { console.log(productId) const
+  response = await fetch(`/api/products/${productId}`); if (!response.ok) {
+  throw new Error('Error al obtener los datos del producto'); } const product =
+  await response.json(); console.log(response) // Llenar el formulario en el
+  modal con los datos del producto
+  document.getElementById('editProductId').value = product._id;
+  document.getElementById('editTitle').value = product.title;
+  document.getElementById('editPrice').value = product.price;
+  document.getElementById('editCategory').value = product.category;
+  document.getElementById('editStock').value = product.stock;
+  document.getElementById('editCode').value = product.code; // Completa con el
+  resto de campos según necesites // Mostrar el modal
+  document.getElementById('editProductModal').classList.remove('hidden'); }
+  catch (error) { console.error('Error al cargar los datos del producto:',
+  error); // Manejar el error adecuadamente, por ejemplo, mostrando un mensaje
+  al usuario } } // Función para cerrar el modal function closeModal() {
+  document.getElementById('editProductModal').classList.add('hidden'); }
+  function submitEditForm() { const form =
+  document.getElementById('editProductForm'); const productId =
+  document.getElementById('editProductId').value; closeModal(); // Cierra el
+  modal después de enviar los datos }
 </script>
