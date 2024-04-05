@@ -149,26 +149,83 @@
 </section>
 
 <script>
-  // Función para abrir el modal de edición con los datos del producto async
-  function openEditModal(productId) { try { console.log(productId) const
-  response = await fetch(`/api/products/${productId}`); if (!response.ok) {
-  throw new Error('Error al obtener los datos del producto'); } const product =
-  await response.json(); console.log(response) // Llenar el formulario en el
-  modal con los datos del producto
-  document.getElementById('editProductId').value = product._id;
-  document.getElementById('editTitle').value = product.title;
-  document.getElementById('editPrice').value = product.price;
-  document.getElementById('editCategory').value = product.category;
-  document.getElementById('editStock').value = product.stock;
-  document.getElementById('editCode').value = product.code; // Completa con el
-  resto de campos según necesites // Mostrar el modal
-  document.getElementById('editProductModal').classList.remove('hidden'); }
-  catch (error) { console.error('Error al cargar los datos del producto:',
-  error); // Manejar el error adecuadamente, por ejemplo, mostrando un mensaje
-  al usuario } } // Función para cerrar el modal function closeModal() {
-  document.getElementById('editProductModal').classList.add('hidden'); }
-  function submitEditForm() { const form =
-  document.getElementById('editProductForm'); const productId =
-  document.getElementById('editProductId').value; closeModal(); // Cierra el
-  modal después de enviar los datos }
+    // Función para abrir el modal de edición con los datos del producto async
+    async function openEditModal(productId) {
+        event.stopPropagation();
+        try {
+            console.log(productId);
+            const response = await fetch(`/api/products/${productId}`);
+            if (!response.ok) {
+                throw new
+                    Error('Error al obtener los datos del producto');
+            }
+            const product = await response.json();
+            console.log(response);
+            document.getElementById('editProductId').value = product._id;
+            document.getElementById('editTitle').value = product.title;
+            document.getElementById('editPrice').value = product.price;
+            document.getElementById('editCategory').value = product.category;
+            document.getElementById('editStock').value = product.stock;
+            document.getElementById('editCode').value = product.code;
+            document.getElementById('editProductModal').classList.remove('hidden');
+        }
+        catch (error) {
+            console.error('Error al cargar los datos del producto:',
+                error);
+        }
+    }
+
+/*
+    async function deleteProduct(productId) {
+        event.stopPropagation();
+        try {
+            console.log(productId);
+            const response = await fetch(`/api/products/${productId}`);
+            if (!response.ok) {
+                throw new
+                    Error('Error al obtener los datos del producto');
+            };
+            const product = await response.json();
+            console.log(response)
+            document.getElementById('editTitle').value = product.title; // Mostrar el modal
+            document.getElementById('editProductModal').classList.remove('hidden');
+        } catch (error) {
+            console.error('Error al cargar los datos del producto:', error);
+        }
+    } 
+
+    */
+async function deleteProduct(productId, event) {
+    event.preventDefault();
+    event.stopPropagation(); 
+    if (!confirm('¿Estás seguro de que quieres eliminar este producto?')) return;
+
+    try {
+        const response = await fetch(`/api/products/${productId}`, { method: 'DELETE' });
+        if (!response.ok) throw new Error('Error al eliminar el producto.');
+
+        let row = event.target.closest("tr");
+        if (row) row.remove();
+
+        console.log('Producto eliminado correctamente.');
+    } catch (error) {
+        console.error('Error al eliminar el producto:', error);
+    }
+}
+
+    // Función para cerrar el modal ARREGLAR ESTO function
+    function closeModal() {
+        document.getElementById('editProductModal').classList.add('hidden');
+    }
+    function submitEditForm() {
+        event.stopPropagation();
+        const form = document.getElementById('editProductForm');
+        const productId = document.getElementById('editProductId').value; closeModal(); // Cierra el modal después de enviar los datos
+    }
+    document.querySelectorAll('.clickable-row').forEach(row => {
+        row.addEventListener('click', () => {
+            const url =
+                row.getAttribute('data-url'); window.location.href = url;
+        });
+    });
 </script>

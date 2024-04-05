@@ -51,7 +51,7 @@ router.get('/products', async (req, res) => {
 
 
 
-router.post('/products', upload.single('thumbnail'), async (req, res) => {
+router.post('/products', upload.single('images'), async (req, res) => {
   try {
     let relativePath = '';
     if (req.file) {
@@ -65,7 +65,7 @@ router.post('/products', upload.single('thumbnail'), async (req, res) => {
       price: req.body.price,
       code: req.body.code,
       stock: req.body.stock,
-      thumbnail: relativePath
+      images: relativePath
     };
 
     await productController.createProduct(newProductData);

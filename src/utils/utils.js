@@ -68,9 +68,9 @@ export const isValidPassword = (password, user) => bcrypt.compareSync(password, 
 
 
 export const generateResetToken = () => {
-    const resetToken = crypto.randomBytes(32).toString('hex');
+    const resetToken = crypto.randomBytes(20).toString('hex');
     const hash = crypto.createHash('sha256').update(resetToken).digest('hex');
-    const expires = new Date(Date.now() + 3600000); // 1 hora en milisegundos
+    const expires = new Date(Date.now() + 3600000);
 
     return { resetToken, hash, expires };
 };

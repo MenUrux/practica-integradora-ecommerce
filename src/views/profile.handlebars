@@ -12,7 +12,7 @@
     src="{{#if user.avatar}}{{user.avatar}}{{else}}/assets/image/no-avatar.png{{/if}}"
     alt="{{user.first_name}} {{user.last_name}}" onclick="document.getElementById('avatar').click();">
   <p><strong>Nombre: </strong>{{user.first_name}}</p>
-  {{#if user.last_name}} 
+  {{#if user.last_name}}
   <p><strong>Apellido: </strong>{{user.last_name}}</p>
   {{/if}}
   <p><strong>Email: </strong>{{user.email}}</p>
@@ -22,7 +22,7 @@
   <p><strong>Ultima conexion: </strong>{{formatDate user.last_connection}}</p>
   {{!-- <p><strong>Nombre: </strong>{{user.first_name}}</p> --}}
   <hr />
-  {{#if (eq user.role 'premium')}} 
+  {{#if (eq user.role 'premium')}}
   {{#if user.documents}}
   <p><strong><i class="fi fi-rr-clip"></i> Documentos ya adjuntos: </strong></p>
   <ul>
@@ -38,7 +38,7 @@
   <p>¿Quieres ser vendedor?, adjunta tus documentos para verificarte.</p>
 
 
-  <form action="/api/users/{{user._id}}/documents" method="post" enctype="multipart/form-data">
+  <form class="flex flex-col" action="/api/users/{{user._id}}/documents" method="post" enctype="multipart/form-data">
     <div>
       <label for="identificacion">Identificación:</label>
       <input type="file" id="identificacion" name="identificacion" required>
@@ -54,7 +54,7 @@
       <input type="file" id="estadoCuenta" name="estadoCuenta" required>
     </div>
 
-    <button type="submit">Subir Documentos</button>
+    <button type="submit" class="self-end py-2.5 px-5 me-2 mb-2 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-full border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700 transition-colors"><i class="fi fi-rr-upload"></i> Subir Documentos</button>
   </form>
   <hr />
   {{/if}}

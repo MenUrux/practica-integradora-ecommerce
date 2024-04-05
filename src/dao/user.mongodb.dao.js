@@ -1,5 +1,7 @@
 import UserModel from "./models/user.model.js";
 import bcrypt from 'bcrypt';
+import { log } from "console";
+import crypto from 'crypto';
 
 export default class UserMongoDbDao {
     static async get(criteria = {}, opts = {}) {
@@ -29,12 +31,20 @@ export default class UserMongoDbDao {
         return UserModel.findOne({ email });
     }
 
-    static async updateResetPasswordFields(userId, resetToken, resetExpires) {
-        return UserModel.findByIdAndUpdate(userId, {
-            resetPasswordToken: resetToken,
-            resetPasswordExpires: resetExpires,
-        }, { new: true }).exec();
-    }
+    /*     static async findByResetPasswordToken(token) {
+            return UserModel.findOne({
+                resetPasswordToken: token,
+                resetPasswordExpires: { $gt: Date.now() },
+            });
+        }
+    
+        static async updateResetPasswordFields(userId, resetToken, resetExpires) {
+            return UserModel.findByIdAndUpdate(userId, {
+                resetPasswordToken: resetToken,
+                resetPasswordExpires: resetExpires,
+            }, { new: true }).exec();
+        }
+     */
 
     static async resetPassword(token, newPassword) {
         const user = await UserModel.findOne({
@@ -53,5 +63,20 @@ export default class UserMongoDbDao {
         return user.save();
     }
 
+    static async validateResetToken(token) {
+        const hash = crypto.createHash('sha256').update(token).digest('hex');
+        const user = await UserModel.findOne({
+            resetPasswordToken: hash,
+            resetPasswordExpires: { $gt: Date.now() },
+        }).exec();
+
+        console.log('User validatereset: ', user);
+        if (!user) {
+            throw new Error('Token inválido o expirado.');
+        }
+
+        const hiddenEmail = user.email.replace(/(.{2}).+(@.+)/, "$1***$2");
+        return { userId: user._id, email: hiddenEmail };
+    }
 
 }

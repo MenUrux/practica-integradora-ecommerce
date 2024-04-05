@@ -1,38 +1,38 @@
 import { generateResetToken } from '../utils/utils.js';
+import UserMongoDbDao from '../dao/user.mongodb.dao.js';
+import UsersController from '../controllers/users.controller.js';
+import bcrypt from 'bcrypt';
 
-import nodemailer from 'nodemailer';
 
 class AuthController {
 
-    static async sendPasswordResetEmail(req, res, next) {
-        const { email } = req.body;
+    static async resetPassword(req, res, next) {
+        const { token, newPassword } = req.body;
         try {
-            const user = await UsersController.findByEmail(email); // Busca el usuario mediante el controlador
-            if (!user) {
-                return res.status(404).json({ message: 'User not found.' });
+            const result = await UserMongoDbDao.validateResetToken(token);
+            if (!result || !result.userId) {
+                return res.status(400).json({ time: Date.now(), message: 'Invalid or expired token.' });
             }
 
-            const { resetToken, hash, expires } = generateResetToken();
+            const userId = result.userId;
 
-            await UsersController.update(user._id, {
-                resetPasswordToken: hash, // Almacena el hash
-                resetPasswordExpires: expires,
+            const salt = await bcrypt.genSalt(10);
+            const hashedPassword = await bcrypt.hash(newPassword, salt);
+
+            await UsersController.update(userId, {
+                password: hashedPassword,
+                resetPasswordToken: "",
+                resetPasswordExpires: new Date(0),
             });
 
-            const resetURL = `${req.protocol}://${req.get('host')}/reset-password/${resetToken}`;
-
-            let result = await transport.sendMail({
-                from: process.env.EMAIL_NODEEMAILER,
-                to: user.email,
-                subject: 'Reset your password - Ecommerce',
-                html: `¡Hey!, aquí tienes para poder realizar la recuperación de cuenta! <a href="${resetURL}">Restablecer contraseña</a>`
-            });
-
-            res.status(201).json({ message: 'Password reset email sent successfully.', result });
+            res.json({ message: 'Password has been updated successfully.' });
         } catch (error) {
             next(error);
         }
     }
+
+
+
 }
 
 export default AuthController;

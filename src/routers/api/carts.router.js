@@ -3,8 +3,6 @@ import CartsController from '../../controllers/cart.controller.js';
 import ProductsController from '../../controllers/product.controller.js';
 import { generateLoggerMessage } from '../../utils/logger.js';
 
-// import TicketsController from '../../controllers/tickets.controller.js';
-
 const router = Router();
 
 router.get('/', async (req, res, next) => {
@@ -57,7 +55,6 @@ router.put('/:cid', async (req, res, next) => {
     next(error);
   }
 });
-
 
 router.delete('/:cid', async (req, res, next) => {
   req.logger.info(generateLoggerMessage(req));
@@ -172,6 +169,12 @@ router.post('/:cid/purchase', async (req, res, next) => {
     next(error);
   }
 });
+
+
+
+
+
+
 
 
 export default router;

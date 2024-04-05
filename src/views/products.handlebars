@@ -19,7 +19,7 @@
             class="bg-white border border-gray-200 rounded-lg shadow overflow-hidden dark:bg-gray-800 dark:border-gray-700 relative h-96">
             <div class="aspect-w-1 aspect-h-1 overflow-clip relative">
                 <a href="/products/{{this._id}}">
-                    {{#if this.thumbnail}}
+                    {{#if this.images}}
                     <!-- Si hay imagen, mostrarla -->
 
 
@@ -39,8 +39,8 @@
                     </div>
 
 
-                    <img class="hidden article-image object-cover rounded-t-lg w-full h-full aspect-square bg-red-50 transition-transform  hover:scale-110 {{#lessorequal this.stock 0}} blur-[2px] {{/lessorequal}}"
-                        src="{{this.thumbnail}}" alt="{{this.title}}">
+                    <img class="hidden article-image object-cover rounded-t-lg w-full h-full aspect-square bg-red-50 transition-transform  hover:scale-110 {{#lessorequal this.stock 0}} grayscale {{/lessorequal}}"
+                        src="{{getFirstImage this.images}}" alt="{{this.title}}">
 
                     {{else}}
                     <!-- Si no hay imagen, mostrar imagen predeterminada -->
@@ -90,7 +90,7 @@
                         Disponibles: {{this.stock}}
                     </p>
                     <button onclick="addProductToCart('{{this._id}}')"
-                        class="absolute right-1 bottom-1 text-nowrap  text-gray-900 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-200 font-medium rounded-lg text-sm px-5 py-2.5  dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700">
+                        class="transition-colors absolute right-1 bottom-1 text-nowrap  text-gray-900 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-200 font-medium rounded-lg text-sm px-5 py-2.5  dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700">
                         <i class="fi fi-rr-shopping-cart"></i> Agregar</button>
 
                     </button>
@@ -98,14 +98,14 @@
                     {{!-- Caso para cuando hay suficiente stock --}}
                     <p class="stock text-wrap w-1/2">Disponibles: {{this.stock}}</p>
                     <button onclick="addProductToCart('{{this._id}}')"
-                        class="absolute right-1 bottom-1 text-nowrap  text-gray-900 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-200 font-medium rounded-lg text-sm px-5 py-2.5  dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700">
+                        class="transition-colors absolute right-1 bottom-1 text-nowrap  text-gray-900 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-200 font-medium rounded-lg text-sm px-5 py-2.5  dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700">
                         <i class="fi fi-rr-shopping-cart"></i> Agregar</button>
 
                     {{/lessorequal}}
                     {{/lessorequal}}
                     <div class="flex gap-2 justify-end">
                         <h6
-                            class="absolute left-1 bottom-1 text-nowrap text-xl italic tracking-tight text-gray-900 dark:text-white">
+                            class="transition-colors absolute left-1 bottom-1 text-nowrap text-xl italic tracking-tight text-gray-900 dark:text-white">
                             ${{ this.price }}
                         </h6>
                     </div>

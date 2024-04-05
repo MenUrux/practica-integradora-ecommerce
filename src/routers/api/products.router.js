@@ -64,9 +64,9 @@ router.post('/', async (req, res, next) => {
       price,
       code,
       stock,
-      thumbnail
+      images
     } = body;
-    console.log(title, description, category, price, code, stock, thumbnail)
+    console.log(title, description, category, price, code, stock, images)
     if (
       !title ||
       !description ||
@@ -74,7 +74,7 @@ router.post('/', async (req, res, next) => {
       !price ||
       !code ||
       !stock ||
-      !thumbnail
+      !images
     ) {
       CustomError.create({
         name: 'Invalid data product',
@@ -85,7 +85,7 @@ router.post('/', async (req, res, next) => {
           price,
           code,
           stock,
-          thumbnail
+          images
         }),
         message: 'Ocurrio un error mientras se intentaba crear un nuevo producto.',
         code: EnumsError.BAD_REQUEST_ERROR

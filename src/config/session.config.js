@@ -8,7 +8,11 @@ const sessionConfig = session({
     secret: process.env.SESSION_SECRET,
     resave: false,
     saveUninitialized: false,
-    store: MongoStore.create({ mongoUrl: process.env.MONGODB_URI })
+    store: MongoStore.create({ mongoUrl: process.env.MONGODB_URI }),
+    cookie: {
+        // Una hora
+        maxAge: 3600000
+    }
 });
 
 export default sessionConfig;

@@ -1,13 +1,8 @@
-import jwt from 'jsonwebtoken';
-import bcrypt from 'bcrypt';
 import dotenv from 'dotenv';
 import UserModel from '../dao/models/user.model.js';
 
 
 dotenv.config();
-
-const jwtSecret = process.env.SESSION_SECRET; // Usar la variable de entorno
-const jwtExpiration = '1h';
 
 import UserDao from "../dao/user.mongodb.dao.js"
 
@@ -29,6 +24,14 @@ export default class UsersController {
 
     static async findByEmail(email) {
         const user = await UserDao.findByEmail(email);
+        if (user) {
+            console.log(`Se encontro el usuario exitosamente ${JSON.stringify(user)}`);
+        }
+        return user;
+    }
+
+    static async findByResetPasswordToken(token) {
+        const user = await UserDao.findByResetPasswordToken(token);
         if (user) {
             console.log(`Se encontro el usuario exitosamente ${JSON.stringify(user)}`);
         }
@@ -75,10 +78,6 @@ export default class UsersController {
         }
     }
 
-
-    static async getCurrentUser(req, res) {
-    }
-
     static async logout(req, res) {
         const userId = req.user._id;
         console.log(userId)
@@ -92,35 +91,10 @@ export default class UsersController {
     }
 
 
-    static async requestPasswordReset(req, res) {
-        try {
-            const { email } = req.body;
-            const user = await UserModel.findOne({ email });
-            if (!user) {
-                return res.status(200).json({ message: 'Si estás registrado, recibiras un correo para recuperar la contraseña..' });
-            }
-
-            const resetToken = crypto.randomBytes(20).toString('hex');
-            const expireAt = Date.now() + 3600000;
-
-            await UserModel.updateOne({ _id: user._id }, { resetToken, expireAt });
-
-            const resetLink = `http://yourdomain.com/reset-password/${resetToken}`;
-            await sendPasswordResetEmail(user.email, resetLink);
-
-            res.status(200).json({ message: 'Por favor, verifica tu correo electrónico.' });
-        } catch (error) {
-            res.status(500).json({ message: 'Error interno del servidor.' });
-        }
-    }
-
     static async addDocumentsToUser(uid, userDocuments) {
         const user = await this.getById(uid);
-
         user.documents.push(...userDocuments);
-
         await user.save();
-
         return user;
     }
 
@@ -150,11 +124,9 @@ export default class UsersController {
 
     static async updateUserAvatar(uid, avatarPath) {
         const user = await UserModel.findByIdAndUpdate(uid, { avatar: avatarPath }, { new: true });
-
         if (!user) {
             throw new Error('Usuario no encontrado');
         }
-
         return user;
     }
 

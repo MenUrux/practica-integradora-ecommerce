@@ -211,7 +211,7 @@
       </div>
       <hr class="my-6 border-gray-200 sm:mx-auto dark:border-gray-700 lg:my-8" />
       <div class="sm:flex sm:items-center sm:justify-between">
-        <span class="text-sm text-gray-500 sm:text-center dark:text-gray-400">© 2024 <a href="#"
+        <span class="text-sm text-gray-500 sm:text-center dark:text-gray-400" id="year">2024 <a href="#"
             class="hover:underline">Clickn'Shop</a>. Todos los derechos reservados.
         </span>
         <div class="flex mt-4 sm:justify-center sm:mt-0">
@@ -233,6 +233,10 @@
   <script src="/js/cart.js"></script>
   <script src="/js/products.js"></script>
   <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+
+  <script>
+    document.getElementById("year").innerHTML = `© ${new Date().getFullYear()}`;
+  </script>
 </body>
 
 </html>

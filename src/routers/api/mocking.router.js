@@ -18,7 +18,7 @@ router.get('/', async (req, res, next) => {
                 price: fakerES.commerce.price(),
                 code: fakerES.string.alphanumeric(6),
                 stock: fakerES.number.int({ min: 0, max: 100 }),
-                thumbnail: fakerES.image.url()
+                images: [fakerES.image.url(), fakerES.image.url(), fakerES.image.url()]
             };
             mockingProducts.push(product);
         }

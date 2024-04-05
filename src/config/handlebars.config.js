@@ -22,6 +22,9 @@ const hbs = handlebars.create({
         },
         formatDate: function (datetime) {
             return moment(datetime).format('YYYY-MM-DD HH:mm:ss');
+        },
+        getFirstImage: function (images) {
+            return images && images.length ? images[0] : null;
         }
         // otros helpers...
     }

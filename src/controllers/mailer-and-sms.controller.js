@@ -2,13 +2,14 @@ import { ecommerceName, generateResetToken } from '../utils/utils.js';
 import { generatePurchaseConfirmationHTML, recoveryPassHTML, welcomeUser, attachmentPath } from '../utils/emailTemplates.js';
 import { client as clientTwilio, transport as nodemailerTransport } from '../config/nodemailer-and-twilio.config.js';
 import UsersController from '../controllers/users.controller.js';
+import UserModel from '../dao/models/user.model.js'
 
 
 class MailerAndSmsController {
     static async sendPurchaseConfirmationEmail(req, res, next) {
         const { first_name, email } = req.user;
 
-        // Arreglar lo del numero de compra.
+        // Arreglar lo del numero de compra. debo hacerlo con el numero de orden o brindar una id unica de orden.
         const purchaseNumber = '2125151'
         try {
             const emailHTML = generatePurchaseConfirmationHTML({
@@ -44,10 +45,11 @@ class MailerAndSmsController {
             }
 
             const { resetToken, hash, expires } = generateResetToken();
-            await UsersController.update(user._id, {
+
+            await UserModel.findByIdAndUpdate(user._id, {
                 resetPasswordToken: hash,
                 resetPasswordExpires: expires,
-            });
+            }, { new: true });
 
             const resetURL = `${req.protocol}://${req.get('host')}/auth/reset-password?token=${resetToken}`;
             const emailHTML = recoveryPassHTML({
@@ -58,7 +60,7 @@ class MailerAndSmsController {
             const result = await nodemailerTransport.sendMail({
                 from: process.env.EMAIL_NODEEMAILER,
                 to: user.email,
-                subject: `Reset your password - ${ecommerceName}`,
+                subject: `Reset your password - ${ecommerceName}`, // Asegúrate de definir ECOMMERCE_NAME en tus variables de entorno
                 html: emailHTML,
                 attachments: [{
                     filename: 'banner.png',
@@ -66,12 +68,13 @@ class MailerAndSmsController {
                     cid: 'banner'
                 }]
             });
+
             res.status(201).json({ message: 'Password reset email sent successfully.', result });
         } catch (error) {
+            console.error(error);
             next(error);
         }
     }
-
 
     static async sendWelcomeEmail({ user }, res, next) {
         const { first_name, email } = user;
@@ -101,7 +104,7 @@ class MailerAndSmsController {
     static async sendSMSNotification(req, res, next) {
         try {
             const result = await clientTwilio.messages.create({
-                body: `Thank you for your purchase, we will be in touch soon!`,
+                body: `Gracias por tu compra!`,
                 from: process.env.TWILIO_SMS_NUMBER,
                 to: process.env.TWILIO_SMS_TO_NUMBER
             });

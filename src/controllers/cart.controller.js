@@ -18,7 +18,6 @@ export default class CartsController {
             console.log(`Se encontro el cart exitosamente ${JSON.stringify(cart)}`);
         }
         return cart;
-
     }
 
     static async create(data) {
@@ -29,7 +28,18 @@ export default class CartsController {
 
     static async resolve(cid, { status }) {
         return CartMongoDbDao.updateById(cid, { status });
+    }
 
+    static async getOrCreateCartForUser(req, res) {
+        const userId = req.user._id;
+
+        let cart = await CartModel.findOne({ user: userId });
+        if (!cart) {
+            cart = new CartModel({ user: userId, products: [] });
+            await cart.save();
+        }
+
+        return cart;
     }
 
     static async finalizePurchase(cartId, userId) {
@@ -58,7 +68,7 @@ export default class CartsController {
 
 
         const user = await UserModel.findById(userId);
-        // await sendConfirmation(user.email, order); // proximamente para enviar orden a ig o email
+        // await sendConfirmation(user.email, order); // proximamente para enviar orden a sms o email
 
         const ticket = await TicketMongoDbDao.createTicket({
             userId,
@@ -91,4 +101,37 @@ export default class CartsController {
         }
     }
 
+
+    static async addToCart(req, res) {
+        const userId = req.user._id; // Asume autenticación
+        const { productId, quantity } = req.body;
+
+        // Verificar existencia y stock del producto
+        const product = await ProductModel.findById(productId);
+        if (!product) {
+            return res.status(404).json({ message: 'Producto no encontrado' });
+        }
+        if (product.stock < quantity) {
+            return res.status(400).json({ message: 'No hay suficiente stock disponible' });
+        }
+
+        // Obtener o crear carrito
+        let cart = await CartModel.findOne({ user: userId });
+        if (!cart) {
+            cart = new CartModel({ user: userId, products: [] });
+            await cart.save();
+        }
+
+        // Agregar o actualizar producto en el carrito
+        const productIndex = cart.products.findIndex(item => item.product.toString() === productId);
+        if (productIndex > -1) {
+            cart.products[productIndex].quantity += quantity;
+        } else {
+            cart.products.push({ product: productId, quantity });
+        }
+        await cart.save();
+
+        // Responder al cliente
+        res.status(200).json({ message: 'Producto añadido al carrito correctamente', cart });
+    }
 }

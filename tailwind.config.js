@@ -9,6 +9,12 @@ export default {
       fontFamily: {
         'sans': ['Oswald', 'sans-serif'],
 
+      },
+      colors: {
+        'custom-pink': '#990066',
+      },
+      backgroundImage: {
+        'custom-gradient': 'linear-gradient(0deg, rgba(153,0,102,1) 0%, rgba(0,0,0,0) 100%)',
       }
     }
   },

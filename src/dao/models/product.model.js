@@ -8,7 +8,7 @@ const ProductSchema = new mongoose.Schema({
   price: { type: Number, required: true },
   code: { type: String, required: true },
   stock: { type: Number, required: true },
-  thumbnail: { type: String },
+  images: [{ type: String }],
   owner: { type: String, required: true, default: 'admin', enum: ['admin', 'premium'] }
 }, { timestamps: true });
 
