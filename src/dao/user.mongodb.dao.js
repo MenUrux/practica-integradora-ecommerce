@@ -4,8 +4,14 @@ import { log } from "console";
 import crypto from 'crypto';
 
 export default class UserMongoDbDao {
-    static async get(criteria = {}, opts = {}) {
-        return UserModel.find(criteria, opts);
+    static async get(filter = {}, opts = {}) {
+        // Asegúrate de que el método find() utilice la opción select si está disponible
+        let query = UserModel.find(filter);
+        if (opts.select) {
+            query = query.select(opts.select);
+        }
+        const users = await query.exec(); // Ejecuta la consulta
+        return users;
     }
     static async getById(uid) {
         return UserModel.findById(uid);

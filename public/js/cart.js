@@ -36,43 +36,48 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 
-
-/* async function loadCart() {
-    const response = await fetch(`api/carts/${cartId}`);
+async function loadCart(userId) {
+    const response = await fetch(`/api/carts/user/${userId}`);
+    if (!response.ok) {
+        console.error('No se pudo obtener el carrito');
+        return;
+    }
     const cart = await response.json();
+
     let totalQuantity = 0;
     const cartItemsContainer = document.getElementById('cart-items');
-    cartItemsContainer.innerHTML = ''; // Limpiar el contenedor
+    cartItemsContainer.innerHTML = '';
 
-    cart.products.forEach(item => {
-        let thumbnail = item.product.thumbnail ? item.product.thumbnail : '/assets/image/no-image.jpg';
+    if (cart && cart.products && cart.products.length > 0) {
+        cart.products.forEach(item => {
+            let images = item.product.images ? item.product.images : '/assets/image/no-image.jpg';
 
-        const productElement = document.createElement('div');
-        productElement.classList.add('product')
-        productElement.innerHTML = `
-        <div class="product-info">
-            <img src="${thumbnail}"/>
-            <span>${item.product.title}</span> Cantidad: ${item.quantity}
-        </div>
-        <button onclick="deleteProductFromCart('${item.product._id}')">Eliminar</button>
-        <hr>
-        `;
-        cartItemsContainer.appendChild(productElement);
-        totalQuantity += item.quantity;
+            const productElement = document.createElement('div');
+            productElement.classList.add('product');
+            productElement.innerHTML = `
+                <div class="product-info flex flex-col">
+                    <img src="${images[0]}"/>
+                    <span>${item.product.title}</span>
+                    $${item.product.price}
+                    Cantidad: ${item.quantity}
+                </div>
+                <button onclick="deleteProductFromCart('${item.product._id}')">Eliminar</button>
+                <hr>
+            `;
+            cartItemsContainer.appendChild(productElement);
+            totalQuantity += item.quantity;
+        });
 
-        console.log(totalQuantity)
-    });
-
-
-
-
-    // Actualizar total
-    const total = cart.products.reduce((acc, item) => acc + (item.quantity * item.product.price), 0);
-    document.getElementById('cart-total').innerText = `Total: $${total}`;
-    document.getElementById('cart-total-items').innerText = `${totalQuantity}`;
+        // Actualizar el total de cantidad y el total de precio
+        const total = cart.products.reduce((acc, item) => acc + (item.quantity * item.product.price), 0);
+        document.getElementById('cart-total').innerText = `Total: $${total}`;
+        document.getElementById('cart-total-items').innerText = `${totalQuantity}`;
+    } else {
+        // Maneja el caso donde no hay productos en el carrito o no se pudo recuperar
+        cartItemsContainer.innerHTML = '<p>Tu carrito está vacío</p>';
+    }
 }
 
-loadCart(); */
 
 
 

@@ -10,6 +10,7 @@ const userSchema = new Schema({
   resetPasswordToken: { type: String, required: false },
   resetPasswordExpires: { type: Date, required: false },
   last_connection: { type: Date },
+  avatar: { type: String, required: false },
   documents: [
     {
       name: { type: String, required: true },

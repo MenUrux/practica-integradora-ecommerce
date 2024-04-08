@@ -20,4 +20,15 @@ export default class ProductMongoDbDao {
         return ProductModel.deleteOne(criteria);
     }
 
+    static async getByOwnerId(ownerId) {
+        try {
+            const products = await ProductModel.find({ owner: ownerId });
+            console.log(`Productos encontrados: ${products.length}`);
+            return products;
+        } catch (error) {
+            console.error(`Error al obtener productos por el ID del propietario: ${error}`);
+            throw error;
+        }
+    }
+
 }

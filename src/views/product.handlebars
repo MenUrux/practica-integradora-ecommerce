@@ -161,22 +161,41 @@
         --}}
 
     <div class="flex flex-col">
-      <p>Precio: ${{product.price}}</p>
+      <p>Descripción: ${{product.description}}</p>
+      <p>Publicado por: {{product.ownerName}}</p>
       <p>Código: {{product.code}}</p>
       <p>Categoría: {{product.category}}</p>
+      <p>Precio: ${{product.price}}</p>
       <p>Stock: {{product.stock}}</p>
-      <p>Dueño: {{product.owner}}</p>
     </div>
   </article>
 </div>
 <script>
-  function goBack() { window.history.back(); }
-  document.addEventListener('DOMContentLoaded', () => { const $prevButton =
-  document.getElementById('data-carousel-prev'); const $nextButton =
-  document.getElementById('data-carousel-next'); if ($prevButton && $nextButton)
-  { $prevButton.addEventListener('click', () => { console.log('clicked prev');
-  carousel.prev(); }); $nextButton.addEventListener('click', () => {
-  console.log('clicked next'); carousel.next(); }); } else {
-  console.log('Carousel buttons not found'); } });
+  function goBack() {
+  window.history.back();
+}
 
+document.addEventListener('DOMContentLoaded', () => {
+  const $prevButton = document.getElementById('data-carousel-prev');
+  const $nextButton = document.getElementById('data-carousel-next');
+
+
+  if ($prevButton && $nextButton) {
+    $prevButton.addEventListener('click', () => {
+      console.log('clicked prev');
+      // Aquí se llama al método prev() del carrusel.
+      // Asegúrate de que este método exista y sea el correcto según la biblioteca de carrusel que estés utilizando.
+      carousel.prev();
+    });
+
+    $nextButton.addEventListener('click', () => {
+      console.log('clicked next');
+      // Aquí se llama al método next() del carrusel.
+      // Asegúrate de que este método exista y sea el correcto según la biblioteca de carrusel que estés utilizando.
+      carousel.next();
+    });
+  } else {
+    console.log('Carousel buttons not found');
+  }
+});
 </script>

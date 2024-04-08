@@ -26,30 +26,35 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage: storage });
 
-router.get('/management', async (req, res) => {
-  const { limit = 20, page = 1, sort, search } = req.query;
+router.get('/management', async (req, res, next) => {
+  if (!req.user) {
+    return res.redirect('/login');
+  }
 
-  const criteria = {};
-  const options = { limit, page };
+  const { limit = 999, page = 1, sort, search } = req.query;
+
+  // Añadir el ID del usuario autenticado al criterio de búsqueda
+  const criteria = { owner: req.user._id }; // Ajusta el campo según tu esquema de producto
+  const options = { limit: parseInt(limit, 10), page: parseInt(page, 10), sort: {} };
 
   if (sort) {
     options.sort = { price: sort };
   }
 
   if (search) {
-    criteria.title = search;
+    criteria.title = { $regex: search, $options: 'i' }; // Búsqueda insensible a mayúsculas/minúsculas
   }
 
   try {
     const result = await ProductModel.paginate(criteria, options);
     const data = buildResponsePaginated({ ...result, search, sort }, siteUrl, search);
-    console.table(data.payload)
-    res.render('management', { title: `Administración ${ecommerceName}`, ...data, user: req.user ? req.user.toJSON() : null });
+    console.table(data.payload);
+    res.render('management', { title: `Administración | ${ecommerceName}`, ...data, user: req.user ? req.user.toJSON() : null });
   } catch (error) {
-    console.error(error);
-    res.status(500).send('Error interno del servidor');
+    next(error);
   }
 });
+
 
 
 

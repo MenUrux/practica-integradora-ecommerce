@@ -9,7 +9,12 @@ const ProductSchema = new mongoose.Schema({
   code: { type: String, required: true },
   stock: { type: Number, required: true },
   images: [{ type: String }],
-  owner: { type: String, required: true, default: 'admin', enum: ['admin', 'premium'] }
+  owner: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
+    required: true
+  },
+  ownerName: { type: String, required: false }
 }, { timestamps: true });
 
 ProductSchema.plugin(mongoosePaginate);

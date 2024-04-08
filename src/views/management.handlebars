@@ -1,235 +1,333 @@
 <h1>Gestión de Productos</h1>
 
-<section>
-    <h2>Añadir Nuevo Producto</h2>
-    <form action="/api/products" method="POST" enctype="multipart/form-data">
-        <input type="text" name="title" placeholder="Título" required />
-        <input type="text" name="description" placeholder="Descripción" required />
-        <input type="number" name="price" placeholder="Precio" required />
-        <input type="text" name="category" placeholder="Categoría" required />
-        <input type="number" name="stock" placeholder="Stock" required />
-        <input type="text" name="code" placeholder="Código" required />
-        <input type="file" name="thumbnail" accept="image/*" required />
-        <button type="submit">Añadir Producto</button>
-    </form>
-</section>
+<button type="button"
+  class="mt-3 w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-blue-500 text-base font-medium text-white hover:bg-blue-700 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm"
+  onclick="openAddModal()">Agregar producto</button>
+{{!-- <div id="addProductModal" class="fixed z-10 inset-0 overflow-y-auto hidden" aria-labelledby="modal-title"
+  role="dialog" aria-modal="true">
+  <h2>Añadir Nuevo Producto</h2>
+  <form id="addProduct" enctype="multipart/form-data">
+    <input type="text" name="title" placeholder="Título" required />
+    <input type="text" name="description" placeholder="Descripción" required />
+    <input type="number" name="price" placeholder="Precio" required />
+    <input type="text" name="category" placeholder="Categoría" required />
+    <input type="number" name="stock" placeholder="Stock" required />
+    <input type="text" name="code" placeholder="Código" required />
+    <input type="file" name="images" accept="image/*" multiple required />
+    <button type="submit">Añadir Producto</button>
+  </form>
+</div> --}}
 
-<form action="/management" method="get">
-    <input type="text" name="search" placeholder="Buscar por nombre" value="{{search}}" />
-    <button type="submit">Buscar</button>
-</form>
+<div id="addProductModal" class="fixed z-10 inset-0 overflow-y-auto hidden" aria-labelledby="modal-title" role="dialog"
+  aria-modal="true">
+  <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0 text-gray-400">
+    <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity text-gray-400" aria-hidden="true">
+    </div>
+    <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
+    <div
+      class="inline-block align-bottom bg-stone-500 rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
+      <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+        <div class="sm:flex sm:items-start">
+          <div class="mt-3 w-full text-center sm:mt-0 sm:ml-4 sm:text-left">
+            <h3 class="text-lg leading-6 font-medium text-gray-900" id="modal-title">Añadir Nuevo Producto</h3>
+            <div class="mt-2 flex flex-col">
+              <form id="addProduct" enctype="multipart/form-data">
+                <input type="text" name="title" placeholder="Título" required />
+                <input type="text" name="description" placeholder="Descripción" required />
+                <input type="number" name="price" placeholder="Precio" required />
+                <input type="text" name="category" placeholder="Categoría" required />
+                <input type="number" name="stock" placeholder="Stock" required />
+                <input type="text" name="code" placeholder="Código" required />
+                <input type="file" name="images" accept="image/*" multiple required />
+                <button
+                  class="mt-3 w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-blue-500 text-base font-medium text-white hover:bg-blue-700 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm"
+                  type="
+                  submit">Añadir Producto</button>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
+        {{!-- <button type="button"
+          class="mt-3 w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-blue-500 text-base font-medium text-white hover:bg-blue-700 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm"
+          onclick="submitEditForm({{this._id}})">Guardar</button> --}}
+        <button type="button"
+          class="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm"
+          onclick="closeAddModal()">Cancelar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <section>
+  <div class="flex items-center justify-center relative">
     <h2 class="text-center text-3xl">Productos Existentes</h2>
-    <table class="border-collapse w-full">
-        <thead>
-            <tr>
-                <th>Imágen</th>
-                <th>Título</th>
-                <th>Precio</th>
-                <th>Categoría</th>
-                <th>Stock</th>
-                <th>Acciones</th>
-            </tr>
-        </thead>
-        <tbody>
-            {{#each payload}}
-            <tr class="hover:bg-stone-400 transition-colors cursor-pointer clickable-row"
-                data-url="/products/{{this._id}}">
+    <form class="absolute right-0" action="/management" method="GET">
+      <input class="text-black" type="text" name="search" placeholder="Buscar producto..." />
+      <button
+        class="text-nowrap text-white bg-gradient-to-r from-purple-500 via-purple-600 to-purple-700 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-purple-300 dark:focus:ring-purple-800 shadow-lg shadow-purple-500/50 dark:shadow-lg dark:shadow-purple-800/80 font-medium rounded-lg text-sm px-5 py-2.5 text-center"
+        type="submit"><i class="fi fi-rr-search"> </i>Buscar</button>
+    </form>
+  </div>
+  <table class="border-collapse w-full">
+    <thead>
+      <tr>
+        <th>Imágen</th>
+        <th>Título</th>
+        <th>Descripción</th>
+        <th>Precio</th>
+        <th>Categoría</th>
+        <th>Stock</th>
+        <th>Acciones</th>
+      </tr>
+    </thead>
+    <tbody>
+      {{#each payload}}
+      <tr class="hover:bg-stone-400 transition-colors cursor-pointer clickable-row" data-url="/products/{{this._id}}">
 
-                <td class="flex justify-center">
-                    <img src="{{this.thumbnail}}" alt="{{this.title}}" class="h-12 w-12 object-cover" />
-                </td>
-                <td>{{this.title}}</td>
-                <td>${{this.price}}</td>
-                <td>{{this.category}}</td>
-                <td>{{this.stock}}</td>
-                <td>
-                    <div class="flex justify-evenly items-center">
+        <td class="flex justify-center">
+          <img src="{{getFirstImage this.images}}" alt="{{this.title}}" class="h-12 w-12 object-cover" />
+        </td>
+        <td>{{this.title}}</td>
+        <td>{{truncateWords this.description}}</td>
+        <td>${{this.price}}</td>
+        <td>{{this.category}}</td>
+        <td>{{this.stock}}</td>
+        <td>
+          <div class="flex justify-evenly items-center">
 
-                    <button type="button" onclick="openEditModal('{{this._id}}', event)"
-                        class="text-indigo-600 hover:text-indigo-900 transition-colors">
-                        Editar
-                    </button>
-                    <button type="button" class="text-red-600 hover:text-red-900 transition-colors"
-                        onclick="deleteProduct('{{this._id}}', event)">Eliminar</button>
-                    </div>
-                </td>
-            </tr>
-            {{/each}}
-            <div id="editProductModal" class="fixed z-10 inset-0 overflow-y-auto hidden" aria-labelledby="modal-title"
-                role="dialog" aria-modal="true">
-                <div
-                    class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0 text-gray-400">
-                    <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity text-gray-400"
-                        aria-hidden="true"></div>
+            <button type="button" onclick="openEditModal('{{this._id}}', event)"
+              class="text-indigo-600 hover:text-indigo-900 transition-colors">
+              Editar
+            </button>
+            <button type="button" class="text-red-600 hover:text-red-900 transition-colors"
+              onclick="deleteProduct('{{this._id}}', event)">Eliminar</button>
+          </div>
+        </td>
+      </tr>
+      {{/each}}
+      <div id="editProductModal" class="fixed z-10 inset-0 overflow-y-auto hidden" aria-labelledby="modal-title"
+        role="dialog" aria-modal="true">
+        <div
+          class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0 text-gray-400">
+          <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity text-gray-400" aria-hidden="true">
+          </div>
 
-                    <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
-                    <div
-                        class="inline-block align-bottom bg-stone-500 rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
-                        <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
-                            <div class="sm:flex sm:items-start">
-                                <div class="mt-3 w-full text-center sm:mt-0 sm:ml-4 sm:text-left">
-                                    <h3 class="text-lg leading-6 font-medium text-gray-900" id="modal-title">Editar
-                                        Producto</h3>
-                                    <div class="mt-2 flex flex-col">
-                                        <form id="editProductForm" class="flex flex-col w-full">
-                                            <label for="editProductId">Id: (no se puede modificar)</label>
-                                            <input type="text" disabled id="editProductId" class="text-gray-600" />
-                                            <label for="editTitle">Titulo</label>
-                                            <input class="text-gray-600" type="text" id="editTitle" />
-                                            <label for="editPrice">Precio</label>
-                                            <input class="text-gray-600" type="number" id="editPrice" />
-                                            <label for="editStock">Stock</label>
-                                            <input class="text-gray-600" type="number" id="editStock" />
-                                            <label for="editCategory">Categoría</label>
-                                            <input class="text-gray-600" type="text" id="editCategory" />
-                                            <label for="editCode">Código</label>
-                                            <input class="text-gray-600" type="text" id="editCode" />
-                                        </form>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
-                            <button type="button"
-                                class="mt-3 w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-blue-500 text-base font-medium text-white hover:bg-blue-700 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm"
-                                onclick="submitEditForm()">Guardar</button>
-                            <button type="button"
-                                class="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm"
-                                onclick="closeModal()">Cancelar</button>
-                        </div>
-                    </div>
+          <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
+          <div
+            class="inline-block align-bottom bg-stone-500 rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
+            <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+              <div class="sm:flex sm:items-start">
+                <div class="mt-3 w-full text-center sm:mt-0 sm:ml-4 sm:text-left">
+                  <h3 class="text-lg leading-6 font-medium text-gray-900" id="modal-title">Editar Producto</h3>
+                  <div class="mt-2 flex flex-col">
+                    <form id="editProductForm" class="flex flex-col w-full">
+                      <label for="editProductId">Id: (no se puede modificar)</label>
+                      <input type="text" disabled id="editProductId" class="text-gray-600" />
+                      <label for="editTitle">Titulo</label>
+                      <input class="text-gray-600" type="text" id="editTitle" />
+                      <label for="editDescription">Descripción</label>
+                      <input class="text-gray-600" type="text" id="editDescription" />
+                      <label for="editPrice">Precio</label>
+                      <input class="text-gray-600" type="number" id="editPrice" min="0" />
+                      <label for="editStock">Stock</label>
+                      <input class="text-gray-600" type="number" id="editStock" min="0" />
+                      <label for="editCategory">Categoría</label>
+                      <input class="text-gray-600" type="text" id="editCategory" />
+                      <label for="editCode">Código</label>
+                      <input class="text-gray-600" type="text" id="editCode" />
+                    </form>
+                  </div>
                 </div>
+              </div>
             </div>
-
-            <div id="editProductModal" class="fixed z-10 inset-0 overflow-y-auto hidden" aria-labelledby="modal-title"
-                role="dialog" aria-modal="true">
-                <div
-                    class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0 text-gray-400">
-                    <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity text-gray-400"
-                        aria-hidden="true"></div>
-
-                    <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
-                    <div
-                        class="inline-block align-bottom bg-stone-500 rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
-                        <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
-                            <div class="sm:flex sm:items-start">
-                                <div class="mt-3 w-full text-center sm:mt-0 sm:ml-4 sm:text-left">
-                                    <h3 class="text-lg leading-6 font-medium text-gray-900" id="modal-title">Editar
-                                        Producto</h3>
-                                    <div class="mt-2 flex flex-col">
-                                        <form id="editProductForm" class="flex flex-col w-full">
-                                            <label for="editProductId">Id: (no se puede modificar)</label>
-                                            <input type="text" disabled id="editProductId" class="text-gray-600" />
-                                            <label for="editTitle">Titulo</label>
-                                            <input class="text-gray-600" type="text" id="editTitle" />
-                                            <label for="editPrice">Precio</label>
-                                            <input class="text-gray-600" type="number" id="editPrice" />
-                                            <label for="editStock">Stock</label>
-                                            <input class="text-gray-600" type="number" id="editStock" />
-                                            <label for="editCategory">Categoría</label>
-                                            <input class="text-gray-600" type="text" id="editCategory" />
-                                            <label for="editCode">Código</label>
-                                            <input class="text-gray-600" type="text" id="editCode" />
-                                        </form>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
-                            <button type="button"
-                                class="mt-3 w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-blue-500 text-base font-medium text-white hover:bg-blue-700 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm"
-                                onclick="submitEditForm()">Guardar</button>
-                            <button type="button"
-                                class="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm"
-                                onclick="closeModal()">Cancelar</button>
-                        </div>
-                    </div>
-                </div>
+            <div class="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
+              <button type="button"
+                class="mt-3 w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-blue-500 text-base font-medium text-white hover:bg-blue-700 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm"
+                onclick="submitEditForm({{this._id}})">Guardar</button>
+              <button type="button"
+                class="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm"
+                onclick="closeModal()">Cancelar</button>
             </div>
-
-        </tbody>
-    </table>
+          </div>
+        </div>
+      </div>
+    </tbody>
+  </table>
 </section>
 
 <script>
-    // Función para abrir el modal de edición con los datos del producto async
-    async function openEditModal(productId) {
-        event.stopPropagation();
-        try {
-            console.log(productId);
-            const response = await fetch(`/api/products/${productId}`);
-            if (!response.ok) {
-                throw new
-                    Error('Error al obtener los datos del producto');
-            }
-            const product = await response.json();
-            console.log(response);
-            document.getElementById('editProductId').value = product._id;
-            document.getElementById('editTitle').value = product.title;
-            document.getElementById('editPrice').value = product.price;
-            document.getElementById('editCategory').value = product.category;
-            document.getElementById('editStock').value = product.stock;
-            document.getElementById('editCode').value = product.code;
-            document.getElementById('editProductModal').classList.remove('hidden');
+  document.addEventListener('DOMContentLoaded', function () {
+    document.querySelector('#addProduct').addEventListener('submit', function (e) {
+      e.preventDefault();
+      const formData = new FormData(this);
+      for (let [key, value] of formData.entries()) {
+        console.log(key, value);
+      }
+      fetch('/api/products', {
+        method: 'POST',
+        body: formData,
+      }).then(response => {
+        if (!response.ok) {
+          throw new Error('Respuesta del servidor no es OK');
         }
-        catch (error) {
-            console.error('Error al cargar los datos del producto:',
-                error);
-        }
-    }
-
-/*
-    async function deleteProduct(productId) {
-        event.stopPropagation();
-        try {
-            console.log(productId);
-            const response = await fetch(`/api/products/${productId}`);
-            if (!response.ok) {
-                throw new
-                    Error('Error al obtener los datos del producto');
-            };
-            const product = await response.json();
-            console.log(response)
-            document.getElementById('editTitle').value = product.title; // Mostrar el modal
-            document.getElementById('editProductModal').classList.remove('hidden');
-        } catch (error) {
-            console.error('Error al cargar los datos del producto:', error);
-        }
-    } 
-
-    */
-async function deleteProduct(productId, event) {
-    event.preventDefault();
-    event.stopPropagation(); 
-    if (!confirm('¿Estás seguro de que quieres eliminar este producto?')) return;
-
-    try {
-        const response = await fetch(`/api/products/${productId}`, { method: 'DELETE' });
-        if (!response.ok) throw new Error('Error al eliminar el producto.');
-
-        let row = event.target.closest("tr");
-        if (row) row.remove();
-
-        console.log('Producto eliminado correctamente.');
-    } catch (error) {
-        console.error('Error al eliminar el producto:', error);
-    }
-}
-
-    // Función para cerrar el modal ARREGLAR ESTO function
-    function closeModal() {
-        document.getElementById('editProductModal').classList.add('hidden');
-    }
-    function submitEditForm() {
-        event.stopPropagation();
-        const form = document.getElementById('editProductForm');
-        const productId = document.getElementById('editProductId').value; closeModal(); // Cierra el modal después de enviar los datos
-    }
-    document.querySelectorAll('.clickable-row').forEach(row => {
-        row.addEventListener('click', () => {
-            const url =
-                row.getAttribute('data-url'); window.location.href = url;
-        });
+        return response.json();
+      }).then(data => {
+        Toastify({
+          text: `Se ha creado el producto con exito.`,
+          duration: 500,
+          close: true,
+          gravity: "top",
+          position: "center",
+          backgroundColor: "linear-gradient(to right, #660099, #660066)",
+        }).showToast();
+        setTimeout(() => {
+          location.reload()
+        }, 1000);
+      }).catch(error => {
+        console.error('Error:', error);
+        Toastify({
+          text: "Error al procesar la solicitud",
+          duration: 3000,
+          close: true,
+          gravity: "top",
+          position: "center",
+          backgroundColor: "linear-gradient(to right, #a40606, #d98324)",
+        }).showToast();
+      });
     });
+  });
+
+
+  async function openEditModal(productId) {
+    event.stopPropagation();
+    try {
+      console.log(productId);
+      const response = await fetch(`/api/products/${productId}`);
+      if (!response.ok) {
+        throw new
+          Error('Error al obtener los datos del producto');
+      }
+      const product = await response.json();
+      console.log(response);
+
+      document.getElementById('editProductId').value = product._id;
+      document.getElementById('editTitle').value = product.title;
+      document.getElementById('editDescription').value = product.description;
+      document.getElementById('editPrice').value = product.price;
+      document.getElementById('editCategory').value = product.category;
+      document.getElementById('editStock').value = product.stock;
+      document.getElementById('editCode').value = product.code;
+      document.getElementById('editProductModal').classList.remove('hidden');
+    }
+    catch (error) {
+      console.error('Error al cargar los datos del producto:',
+        error);
+    }
+  } // Función para abrir el modal de edición con los datos del producto async
+  async function openEditModal(productId) {
+    event.stopPropagation(); try {
+      console.log(productId); const response = await
+        fetch(`/api/products/${productId}`); if (!response.ok) {
+          throw new
+            Error('Error al obtener los datos del producto');
+        }
+      const product = await response.json();
+      console.log(response);
+
+      document.getElementById('editProductId').value = product._id;
+      document.getElementById('editTitle').value = product.title;
+      document.getElementById('editDescription').value = product.description;
+      document.getElementById('editPrice').value = product.price;
+      document.getElementById('editCategory').value = product.category;
+      document.getElementById('editStock').value = product.stock;
+      document.getElementById('editCode').value = product.code;
+      document.getElementById('editProductModal').classList.remove('hidden');
+    }
+    catch (error) {
+      console.error('Error al cargar los datos del producto:',
+        error);
+    }
+  }
+  async function deleteProduct(productId, event) {
+    event.preventDefault();
+    event.stopPropagation();
+
+    if (!confirm('¿Estás seguro de que quieres eliminar este producto?')) {
+      return;
+    }
+    try {
+      const response = await fetch(`/api/products/${productId}`, { method: 'DELETE' });
+      if (!response.ok) {
+        throw new Error('Error al eliminar el producto.');
+      }
+      let row = event.target.closest("tr");
+      if (row) {
+        row.remove();
+      }
+      Toastify({
+        text: 'Se ha eliminado el producto con éxito.',
+        duration: 1000,
+        close: true,
+        gravity: "top",
+        position: "center",
+        backgroundColor: "linear-gradient(to right, #660099, #660066)",
+      }).showToast();
+    } catch (error) {
+      console.error('Error al eliminar el producto:', error);
+    }
+  }
+
+
+
+  function closeModal() {
+    document.getElementById('editProductModal').classList.add('hidden');
+  }
+
+  function openAddModal() {
+    document.getElementById('addProductModal').classList.remove('hidden');
+  }
+
+  function closeAddModal() {
+    document.getElementById('addProductModal').classList.add('hidden');
+  }
+  function submitEditForm(productId) {
+    event.preventDefault(); const pid =
+      document.getElementById('editProductId').value; const formData = {
+        title: document.getElementById('editTitle').value,
+        description: document.getElementById('editDescription').value,
+        price: parseFloat(document.getElementById('editPrice').value),
+        stock: parseInt(document.getElementById('editStock').value),
+        category: document.getElementById('editCategory').value,
+        code: document.getElementById('editCode').value,
+      };
+    console.log(formData)
+    fetch(`/api/products/${pid}`, {
+      method: 'PUT', headers: {
+        'Content-Type':
+          'application/json',
+      }, body: JSON.stringify(formData)
+    }).then(response =>
+      response.json()).then(data => {
+        Toastify({
+          text: `Se ha actualizado el producto con exito.`,
+          duration: 500,
+          close: true,
+          gravity: "top",
+          position: "center",
+          backgroundColor: "linear-gradient(to right, #660099, #660066)",
+        }).showToast();
+        closeModal();
+        location.reload()
+      }).catch((error) => {
+        console.error('Error:', error);
+      });
+  }
+  document.querySelectorAll('.clickable-row').forEach(row => {
+    row.addEventListener('click', () => {
+      const url = row.getAttribute('data-url');
+      window.location.href = url;
+    });
+  });
 </script>

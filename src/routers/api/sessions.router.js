@@ -3,29 +3,32 @@ import passport from 'passport';
 import UserModel from '../../dao/models/user.model.js';
 import { createHash, isValidPassword } from '../../utils/utils.js'
 import NotificationsController from '../../controllers/mailer-and-sms.controller.js';
+import CartsController from '../../controllers/cart.controller.js';
 
 const router = Router();
 
 router.post('/register', passport.authenticate('register', { failureRedirect: '/register' }), async (req, res, next) => {
     try {
-        res.cookie('registered', 'true', { maxAge: 900000, httpOnly: false });
-
-        console.log('req.user register', req.user);
-        const { first_name, email } = req.user;
+        const { first_name, email, _id } = req.user;
         await NotificationsController.sendWelcomeEmail({
             user: { first_name, email }
         }, res, next);
+        await CartsController.create({ user: _id, products: [] }); // Asume que CartsController.create puede manejar esto
         res.json({ success: true, message: "Registro exitoso." });
     } catch (error) {
-        res.status(500).json({ success: false, message: "Error en el registro." });
+        next(error);
     }
 });
 
 router.post('/login', passport.authenticate('login', { failureRedirect: '/login' }), async (req, res) => {
-    req.session.user = req.user;
-    const user = req.session.user;
-    await UserModel.findByIdAndUpdate(user._id, { last_connection: new Date() }, { new: true });
-    res.redirect('/profile');
+    try {
+        req.session.user = req.user;
+        const user = req.session.user;
+        await UserModel.findByIdAndUpdate(user._id, { last_connection: new Date() }, { new: true });
+        res.json({ success: true, message: "Login exitoso." });
+    } catch (error) {
+        next(error);
+    }
 });
 
 

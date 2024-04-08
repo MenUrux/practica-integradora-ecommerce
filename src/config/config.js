@@ -3,4 +3,5 @@ export default {
   port: process.env.PORT || 8080,
   server: `${process.env.SERVER}` || localhost,
   mongodbUri: process.env.MONGODB_URI || 'mongodb://localhost:27017/ecommerce',
+  stripe_secret_token: process.env.STRIPE_SECRET_TOKEN
 }

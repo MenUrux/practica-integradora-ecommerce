@@ -10,7 +10,6 @@ const sessionConfig = session({
     saveUninitialized: false,
     store: MongoStore.create({ mongoUrl: process.env.MONGODB_URI }),
     cookie: {
-        // Una hora
         maxAge: 3600000
     }
 });

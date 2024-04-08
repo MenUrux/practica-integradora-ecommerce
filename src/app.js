@@ -22,6 +22,7 @@ import userViewRouter from './routers/views/users.router.js';
 import authViewRouter from './routers/views/auth.router.js';
 import sessionsRouter from './routers/api/sessions.router.js';
 import documentsRouter from './routers/api/documents.router.js';
+import paymentsViewRouter from './routers/views/payments.router.js';
 
 import managementViewRouter from './routers/views/management.router.js';
 
@@ -68,7 +69,7 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 app.use(addLogger)
-app.use('/', indexRouter, adminRouter, userViewRouter, debugRouter, productsViewRouter, managementViewRouter, authViewRouter);
+app.use('/', indexRouter, adminRouter, userViewRouter, debugRouter, productsViewRouter, managementViewRouter, authViewRouter, paymentsViewRouter);
 app.use('/api/loggerTest', loggersRouter);
 app.use('/api/mockingproducts', mockingRouter);
 app.use('/api/auth', authRouter);

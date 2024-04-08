@@ -114,6 +114,28 @@ class MailerAndSmsController {
             next(error);
         }
     }
+
+    static async sendInactivityEmail(userEmail, userName) {
+        try {
+            const emailHTML = `Estimado/a ${userName}, su cuenta ha sido eliminada por inactividad.`;
+
+            const result = await nodemailerTransport.sendMail({
+                from: process.env.EMAIL_NODEEMAILER,
+                to: userEmail,
+                subject: `Cuenta eliminada por inactividad`,
+                html: emailHTML,
+                attachments: [{
+                    filename: 'banner.png',
+                    path: attachmentPath,
+                    cid: 'banner'
+                }]
+            });
+
+            console.log(`Correo de inactividad enviado a: ${userEmail}`, result);
+        } catch (error) {
+            console.error(`Error al enviar correo de inactividad a: ${userEmail}`, error);
+        }
+    }
 }
 
 export default MailerAndSmsController;

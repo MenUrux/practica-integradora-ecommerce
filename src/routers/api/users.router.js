@@ -125,17 +125,15 @@ router.post('/:uid/documents',
         res.status(400).json({ message: 'No se pudo actualizar al usuario a premium.' });
       }
     } catch (error) {
-      console.error(error);
-      res.status(500).json({ message: error.message });
+      next(error);
     }
   });
 
 router.post('/:uid/avatar',
-  upload.single('avatar'), // Usamos 'single' ya que es un único archivo
+  upload.single('avatar'),
   async (req, res) => {
     const { uid } = req.params;
     try {
-      // req.file contiene la información del archivo de imagen cargado
       const avatarPath = req.file ? req.file.path : null;
 
       if (!avatarPath) {
@@ -151,12 +149,13 @@ router.post('/:uid/avatar',
       });
 
     } catch (error) {
-      console.error(error);
-      res.status(500).json({ message: error.message });
+      next(error);
     }
   }
 );
 
+
+router.delete('/', UsersController.deleteInactiveUsers);
 
 
 router.delete('/:uid', async (req, res, next) => {

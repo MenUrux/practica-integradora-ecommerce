@@ -1,7 +1,7 @@
 <div class="mx-auto flex">
   <div
     class="mx-auto bg-white shadow-md border min-w-[80vh] border-gray-200 rounded-lg p-4 sm:p-6 lg:p-8 dark:bg-gray-800 dark:border-gray-700">
-    <form id="registrationForm" action="/api/sessions/register" method="post" class="flex flex-col gap-2">
+    <form id="registrationForm" class="flex flex-col gap-2">
       <h3 class="text-xl font-medium text-gray-900 dark:text-white text-center">Registrarse</h3>
 
       <div>
@@ -54,52 +54,53 @@
 </div>
 
 <script>
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-  document.querySelector('#registrationForm').addEventListener('submit', function(e) {
-    e.preventDefault(); // Detiene el envío tradicional del formulario
+  document.addEventListener('DOMContentLoaded', function () {
+    document.querySelector('#registrationForm').addEventListener('submit', function (e) {
+      e.preventDefault();
 
-    // Recoge los datos del formulario
-    const formData = new FormData(this);
-    const jsonFormData = JSON.stringify(Object.fromEntries(formData));
+      const formData = new FormData(this);
+      const jsonFormData = JSON.stringify(Object.fromEntries(formData));
 
-    // Realiza la petición al servidor
-    fetch('/api/sessions/register', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: jsonFormData
-    })
-    .then(response => response.json()) // Convierte la respuesta a JSON
-    .then(data => {
-      if(data.success) {
-        // Mostrar toast de éxito
-        Toastify({
-          text: data.message,
-          duration: 3000,
-          close: true,
-          gravity: "top",
-          position: "right",
-          backgroundColor: "linear-gradient(to right, #00b09b, #96c93d)",
-        }).showToast();
-      } else {
-        // Mostrar toast de error (si se desea manejar casos de éxito/fallo diferente)
-        Toastify({
-          text: data.message,
-          duration: 3000,
-          close: true,
-          gravity: "top",
-          position: "left",
-          backgroundColor: "linear-gradient(to right, #a40606, #d98324)",
-        }).showToast();
-      }
-    })
-    .catch(error => {
-      console.error('Error:', error);
+      fetch('/api/sessions/register', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: jsonFormData
+      })
+        .then(response => response.json())
+        .then(data => {
+          if (data.success) {
+            Toastify({
+              text: data.message,
+              duration: 500,
+              close: true,
+              gravity: "top",
+              position: "center",
+              backgroundColor: "linear-gradient(to right, #660099, #660066)",
+
+            }).showToast();
+
+            setTimeout(() => {
+              if (data.success) {
+                window.location.href = '/login';
+              }
+            }, 1000);
+          } else {
+            Toastify({
+              text: data.message,
+              duration: 500,
+              close: true,
+              gravity: "top",
+              position: "center",
+              backgroundColor: "linear-gradient(to right, #a40606, #d98324)",
+            }).showToast();
+          }
+        })
+        .catch(error => {
+          console.error('Error:', error);
+        });
     });
   });
-});
-</script>
 
 </script>

@@ -79,6 +79,7 @@ export default class ProductsController {
             throw error;
         }
     }
+
     static async deleteProduct(id) {
         try {
             const deleteResult = await ProductDao.deleteById(id);
@@ -96,7 +97,7 @@ export default class ProductsController {
             const options = {
                 page: parseInt(page, 10) || 1,
                 limit: parseInt(limit, 10) || 10,
-                sort: sort || { createdAt: -1 } // Orden por defecto
+                sort: sort || { createdAt: -1 }
             };
 
             const customQuery = query ? { title: { $regex: query, $options: 'i' } } : {};
@@ -107,6 +108,22 @@ export default class ProductsController {
         } catch (error) {
             console.error('Error al obtener productos paginados', error);
             throw error;
+        }
+    }
+
+    static async getProductsByOwner(req, res) {
+        try {
+            const ownerId = req.params.ownerId; // Asume que el ID del propietario se pasa como parámetro en la URL
+            const products = await ProductDao.getByOwnerId(ownerId);
+
+            if (products.length === 0) {
+                return res.status(404).json({ message: 'No se encontraron productos para este propietario' });
+            }
+
+            res.status(200).json(products);
+        } catch (error) {
+            console.error(error);
+            res.status(500).json({ message: 'Error al buscar los productos' });
         }
     }
 

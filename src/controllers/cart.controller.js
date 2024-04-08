@@ -20,118 +20,91 @@ export default class CartsController {
         return cart;
     }
 
+    /*  static async create(data) {
+         const cart = await CartMongoDbDao.create(data);
+         console.log(`Se creo el carrito exitosamente ${JSON.stringify(cart)}`);
+         return cart;
+     } */
+
     static async create(data) {
-        const cart = await CartMongoDbDao.create(data);
-        console.log(`Se creo el carrito exitosamente ${JSON.stringify(cart)}`);
-        return cart;
+        try {
+            const cart = await CartMongoDbDao.create(data);
+            console.log(`Carrito creado exitosamente para el usuario ${data.user}`);
+            return cart;
+        } catch (error) {
+            console.error(`Error al crear el carrito: ${error.message}`);
+            throw error;
+        }
     }
 
     static async resolve(cid, { status }) {
         return CartMongoDbDao.updateById(cid, { status });
     }
 
-    static async getOrCreateCartForUser(req, res) {
-        const userId = req.user._id;
-
-        let cart = await CartModel.findOne({ user: userId });
-        if (!cart) {
-            cart = new CartModel({ user: userId, products: [] });
-            await cart.save();
-        }
-
-        return cart;
-    }
-
-    static async finalizePurchase(cartId, userId) {
-        const cart = await CartMongoDbDao.getCart(cartId);
-        let total = 0;
-
-        // Verificar el stock y calcular el total
-        for (let item of cart.products) {
-            const product = await ProductModel.findById(item.product._id);
-            if (item.quantity > product.stock) {
-                return {
-                    error: "Stock insuficiente para el producto " + product.title,
-                    availableStock: product.stock,
-                    // suggestedAction: 'adjustQuantity' // Proximamente
-                };
-            }
-            total += item.quantity * product.price;
-        }
-
-        // Actualizar el inventario
-        for (let item of cart.products) {
-            const product = await ProductModel.findById(item.product._id);
-            product.stock -= item.quantity;
-            await product.save();
-        }
-
-
-        const user = await UserModel.findById(userId);
-        // await sendConfirmation(user.email, order); // proximamente para enviar orden a sms o email
-
-        const ticket = await TicketMongoDbDao.createTicket({
-            userId,
-            orderId: order._id,
-            total,
-        });
-
-        cart.products = [];
-        await cart.save();
-
-        return { success: true, order, ticket };
-    }
-
-    static async addToCart(req, res) {
+    static async addProduct(req, res) {
         try {
-            const userId = req.user._id;
-            const { productId, quantity } = req.body;
+            const userId = req.params.uid;
+            const { product, quantity } = req.body; // Asegúrate de corregir el typo aquí también
 
+            const updatedCart = await CartMongoDbDao.addProductToCart(userId, product, quantity);
+
+            res.json(updatedCart);
+        } catch (error) {
+            res.status(500).json({ error: error.message });
+        }
+    }
+
+    static async clearCart(cartId) {
+        try {
+            return await CartMongoDbDao.clearCart(cartId);
+        } catch (error) {
+            throw new Error(`Error al vaciar el carrito: ${error.message}`);
+        }
+    }
+
+    static async getCartByUserId(req, res) {
+        try {
+            const userId = req.params.uid;
             let cart = await CartMongoDbDao.getByUserId(userId);
             if (!cart) {
-                cart = await CartMongoDbDao.create(userId);
+                // Opcional: crear un carrito si no existe
+                cart = await CartMongoDbDao.create({ user: userId, products: [] });
             }
-
-            await CartMongoDbDao.addProductToCart(cart._id, productId, quantity);
-
-            res.status(200).json({ message: 'Product added to cart successfully', cart });
+            res.json(cart);
         } catch (error) {
-            console.error(error);
-            res.status(500).json({ error: 'An error occurred while adding the product to the cart' });
+            res.status(500).json({ error: error.message });
         }
     }
 
+    static async createOrUpdateCartByUserId(req, res) {
+        try {
+            const userId = req.params.uid;
+            const { products } = req.body; // Asume que recibes una lista de productos a añadir o actualizar en el carrito
 
-    static async addToCart(req, res) {
-        const userId = req.user._id; // Asume autenticación
-        const { productId, quantity } = req.body;
+            // Busca si ya existe un carrito para el usuario
+            let cart = await CartMongoDbDao.getByUserId(userId);
 
-        // Verificar existencia y stock del producto
-        const product = await ProductModel.findById(productId);
-        if (!product) {
-            return res.status(404).json({ message: 'Producto no encontrado' });
+            if (cart) {
+                // Actualiza el carrito existente con los nuevos productos
+                cart = await CartMongoDbDao.updateById(cart._id, { products });
+            } else {
+                // Crea un nuevo carrito con los productos proporcionados
+                cart = await CartMongoDbDao.create({ user: userId, products });
+            }
+
+            res.json(cart);
+        } catch (error) {
+            res.status(500).json({ error: error.message });
         }
-        if (product.stock < quantity) {
-            return res.status(400).json({ message: 'No hay suficiente stock disponible' });
-        }
+    }
 
-        // Obtener o crear carrito
-        let cart = await CartModel.findOne({ user: userId });
-        if (!cart) {
-            cart = new CartModel({ user: userId, products: [] });
-            await cart.save();
+    static async clearCartByUserId(req, res) {
+        try {
+            const userId = req.params.uid; // Captura el ID del usuario desde el parámetro de ruta
+            await CartMongoDbDao.clearCartByUserId(userId); // Llama al DAO para vaciar el carrito
+            res.json({ message: 'Carrito vaciado con éxito' });
+        } catch (error) {
+            res.status(500).json({ error: error.message });
         }
-
-        // Agregar o actualizar producto en el carrito
-        const productIndex = cart.products.findIndex(item => item.product.toString() === productId);
-        if (productIndex > -1) {
-            cart.products[productIndex].quantity += quantity;
-        } else {
-            cart.products.push({ product: productId, quantity });
-        }
-        await cart.save();
-
-        // Responder al cliente
-        res.status(200).json({ message: 'Producto añadido al carrito correctamente', cart });
     }
 }

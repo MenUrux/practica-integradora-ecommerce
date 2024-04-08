@@ -82,26 +82,38 @@ router.delete('/:cid', async (req, res, next) => {
 // });
 
 
-router.post('/add', async (req, res, next) => {
-  try {
-    const userId = req.user._id; // Asegúrate de que el usuario esté autenticado y se pueda obtener su ID
-    let cart = await CartMongoDbDao.getByUserId(userId); // Obtener el carrito por el ID del usuario
-    if (!cart) {
-      cart = await CartMongoDbDao.create({ user: userId, products: [] }); // Crear un carrito si no existe
-    }
+router.post('/user/:uid', CartsController.addProduct);
 
+router.post('/cart/add-product', async (req, res) => {
+  try {
+    const userId = req.user._id; // Asume que el middleware de autenticación añade el usuario a req
     const { productId, quantity } = req.body;
 
-    await CartMongoDbDao.addProductToCart(cart._id, productId, quantity); // Añadir el producto al carrito
+    // Primero, obtener o crear el carrito para el usuario
+    let cart = await CartMongoDbDao.getByUserId(userId);
+    if (!cart) {
+      // Si no existe, crear un nuevo carrito para el usuario
+      cart = await CartMongoDbDao.create({ user: userId, products: [] });
+    }
 
-    res.status(200).json({ message: 'Product added to cart successfully', cartId: cart._id });
+    // Luego, añadir el producto al carrito
+    const updatedCart = await CartMongoDbDao.addProductToCart(cart._id, productId, quantity || 1);
+
+    res.json({ message: 'Producto añadido al carrito con éxito', cart: updatedCart });
   } catch (error) {
     console.error(error);
-    next(error);
+    res.status(500).json({ error: error.message });
   }
 });
 
+// Obtener el carrito de un usuario específico
+router.get('/user/:uid', CartsController.getCartByUserId);
 
+// Crear o actualizar el carrito de un usuario específico
+router.post('/user/:uid', CartsController.createOrUpdateCartByUserId);
+
+// Añadir un ejemplo de cómo eliminar todos los productos del carrito de un usuario específico, si es necesario
+router.delete('/user/:uid', CartsController.clearCartByUserId);
 
 
 //Todavía sigo arreglando esto.

@@ -25,6 +25,13 @@ const hbs = handlebars.create({
         },
         getFirstImage: function (images) {
             return images && images.length ? images[0] : null;
+        },
+        truncateWords: function (description) {
+            const len = 48;
+            if (description.length > len) {
+                return description.substring(0, len) + '...';
+            }
+            return description;
         }
         // otros helpers...
     }
