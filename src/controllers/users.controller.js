@@ -133,7 +133,7 @@ export default class UsersController {
 
     static async deleteInactiveUsers(req, res) {
         try {
-            const thresholdDate = new Date(new Date().getTime() - (1 * 60 * 1000));
+            const thresholdDate = new Date(new Date().getTime() - (30 * 60 * 1000));
 
             const inactiveUsers = await UserModel.find({
                 last_connection: { $lt: thresholdDate },

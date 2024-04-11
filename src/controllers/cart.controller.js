@@ -79,16 +79,13 @@ export default class CartsController {
     static async createOrUpdateCartByUserId(req, res) {
         try {
             const userId = req.params.uid;
-            const { products } = req.body; // Asume que recibes una lista de productos a añadir o actualizar en el carrito
+            const { products } = req.body;
 
-            // Busca si ya existe un carrito para el usuario
             let cart = await CartMongoDbDao.getByUserId(userId);
 
             if (cart) {
-                // Actualiza el carrito existente con los nuevos productos
                 cart = await CartMongoDbDao.updateById(cart._id, { products });
             } else {
-                // Crea un nuevo carrito con los productos proporcionados
                 cart = await CartMongoDbDao.create({ user: userId, products });
             }
 

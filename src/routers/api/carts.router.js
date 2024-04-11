@@ -106,13 +106,10 @@ router.post('/cart/add-product', async (req, res) => {
   }
 });
 
-// Obtener el carrito de un usuario específico
 router.get('/user/:uid', CartsController.getCartByUserId);
 
-// Crear o actualizar el carrito de un usuario específico
 router.post('/user/:uid', CartsController.createOrUpdateCartByUserId);
 
-// Añadir un ejemplo de cómo eliminar todos los productos del carrito de un usuario específico, si es necesario
 router.delete('/user/:uid', CartsController.clearCartByUserId);
 
 
@@ -122,7 +119,6 @@ router.post('/:cid/purchase', async (req, res, next) => {
   const cartId = req.params.cid;
 
   try {
-    // Obtener el carrito
     const cart = await CartsController.getById(cartId);
 
     if (!cart) {
