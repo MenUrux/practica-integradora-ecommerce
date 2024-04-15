@@ -44,7 +44,7 @@ export default class CartsController {
     static async addProduct(req, res) {
         try {
             const userId = req.params.uid;
-            const { product, quantity } = req.body; // Asegúrate de corregir el typo aquí también
+            const { product, quantity } = req.body;
 
             const updatedCart = await CartMongoDbDao.addProductToCart(userId, product, quantity);
 
@@ -67,7 +67,7 @@ export default class CartsController {
             const userId = req.params.uid;
             let cart = await CartMongoDbDao.getByUserId(userId);
             if (!cart) {
-                // Opcional: crear un carrito si no existe
+
                 cart = await CartMongoDbDao.create({ user: userId, products: [] });
             }
             res.json(cart);
@@ -78,6 +78,7 @@ export default class CartsController {
 
     static async createOrUpdateCartByUserId(req, res) {
         try {
+            console.log(req.body);
             const userId = req.params.uid;
             const { products } = req.body;
 
@@ -89,7 +90,7 @@ export default class CartsController {
                 cart = await CartMongoDbDao.create({ user: userId, products });
             }
 
-            res.json(cart);
+            res.status(201).json(cart);
         } catch (error) {
             res.status(500).json({ error: error.message });
         }
@@ -97,8 +98,8 @@ export default class CartsController {
 
     static async clearCartByUserId(req, res) {
         try {
-            const userId = req.params.uid; // Captura el ID del usuario desde el parámetro de ruta
-            await CartMongoDbDao.clearCartByUserId(userId); // Llama al DAO para vaciar el carrito
+            const userId = req.params.uid;
+            await CartMongoDbDao.clearCartByUserId(userId);
             res.json({ message: 'Carrito vaciado con éxito' });
         } catch (error) {
             res.status(500).json({ error: error.message });

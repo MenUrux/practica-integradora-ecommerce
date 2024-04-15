@@ -31,78 +31,48 @@ export default class CartMongoDbDao {
     }
 
     static async addProductToCart(userId, productId, quantityToAdd) {
-        // Primero, obtén el carrito del usuario
-        let cart = await this.getByUserId(userId);
-        if (!cart) {
-            // Si no existe un carrito para el usuario, crea uno nuevo
-            cart = new CartModel({ user: userId, products: [] });
+        if (!productId) {
+            throw new Error('El ID del producto no está definido');
         }
 
-        // Verifica si el producto ya existe en el carrito
-        const productIndex = cart.products.findIndex(item => item.product.toString() === productId);
+        let cart = await this.getByUserId(userId);
+        if (!cart) {
+            console.log("No existe carrito, creando uno nuevo.");
+            cart = await CartModel.create({ user: userId, products: [] });
+        } else if (!cart.products) {
+            console.log("Inicializando el arreglo de productos.");
+            cart.products = [];
+        }
+
+        console.log("Carrito encontrado:", cart);
+        console.log("ID del producto a buscar:", productId);
+
+        const productIndex = cart.products.findIndex(item => item.product?.toString() === productId);
 
         if (productIndex > -1) {
-            // Si el producto ya existe, simplemente actualiza la cantidad
+            console.log("Producto encontrado en el carrito, actualizando cantidad.");
             cart.products[productIndex].quantity += quantityToAdd;
         } else {
-            // Si el producto no existe, añádelo al carrito
+            console.log("Producto no encontrado en el carrito, añadiendo nuevo producto.");
             cart.products.push({ product: productId, quantity: quantityToAdd });
         }
 
-        // Guarda los cambios en el carrito
-        await cart.save();
-        return cart;
-    }
-
-    /*     static async addProductToCart(cartId, productId, quantity = 1) {
-            try {
-                const cart = await Cart.findById(cartId);
-                if (!cart) {
-                    throw new Error('Carrito no encontrado');
-                }
-    
-                const product = await Product.findById(productId);
-                if (!product) {
-                    throw new Error('Producto no encontrado');
-                }
-    
-                const productIndex = cart.products.findIndex(item => item.product.toString() === productId);
-    
-                if (productIndex > -1) {
-                    cart.products[productIndex].quantity += quantity;
-                } else {
-                    cart.products.push({ product: productId, quantity });
-                }
-    
-                await cart.save();
-                return cart;
-            } catch (error) {
-                throw new Error(`Error al añadir producto al carrito: ${error.message}`);
-            }
+        try {
+            await cart.save();
+            return cart;
+        } catch (error) {
+            console.error("Error al guardar el carrito:", error);
+            throw new Error('Error al agregar producto al carrito');
         }
-    
-        static async removeProductFromCart(cartId, productId, quantity = 1) {
-            const cart = await this.getById(cartId);
-            if (!cart) throw new Error('Cart not found');
-    
-            const productIndex = cart.products.findIndex(item => item.product.toString() === productId);
-            if (productIndex > -1) {
-                cart.products[productIndex].quantity = Math.max(0, cart.products[productIndex].quantity - quantity);
-                if (cart.products[productIndex].quantity === 0) {
-                    cart.products.splice(productIndex, 1);
-                }
-            } else {
-                throw new Error('Product not found in cart');
-            }
-    
-            return cart.save();
-        } */
-
+    }
 
     static async clearCart(cartId) {
         const cart = await this.getById(cartId);
-        if (!cart) throw new Error('Cart not found');
-        cart.products = []; // Vacía el arreglo de productos
+        if (!cart) {
+            throw new Error('Carrito no encontrado');
+        }
+        console.log("Limpiando productos del carrito.");
+        cart.products = [];
         return cart.save();
     }
 }

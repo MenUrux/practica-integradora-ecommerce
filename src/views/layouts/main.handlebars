@@ -12,6 +12,11 @@
   <script src="https://kit.fontawesome.com/8f7db24c63.js" crossorigin="anonymous"></script>
   <link rel="stylesheet" href="/stylesheet/tailwind.css">
   <title>{{title}}</title>
+  <script src="/js/cart.js"></script>
+  <script>
+    let userId = '{{user._id}}';
+    loadCart(userId);
+  </script>
 </head>
 
 <body>
@@ -101,7 +106,7 @@
       <div id="cart-total">Total: $0</div>
       <!-- Botones para acciones -->
       <div class="flex gap-2 justify-center">
-        <button type="button" id="clear-cart-button"
+        <button type="button" id="clear-cart-button" onclick="deleteAllProductsFromCart('{{ user._id }}');"
           class="text-white transition-colors bg-red-700 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center flex gap-2 justify-center items-center me-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-800">
           <i class="fi fi-rr-trash"> </i>
           <span>
@@ -241,16 +246,12 @@
     </div>
   </footer>
 
-
   <script src="/js/cart.js"></script>
   <script src="/js/products.js"></script>
   <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
 
   <script>
     document.getElementById("year").innerHTML = `© ${new Date().getFullYear()}`;
-  </script>
-  <script>
-    loadCart(`{{ user._id }}`);
   </script>
 </body>
 

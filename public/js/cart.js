@@ -55,8 +55,8 @@ async function loadCart(userId) {
             const productElement = document.createElement('div');
             productElement.classList.add('product');
             productElement.innerHTML = `
-                <div class="product-info flex flex-col">
-                    <img src="${images[0]}"/>
+                <div class="product-info flex gap-4">
+                    <img class="w-24 h-24 object-cover" src="${images[0]}"/>
                     <span>${item.product.title}</span>
                     $${item.product.price}
                     Cantidad: ${item.quantity}
@@ -75,44 +75,72 @@ async function loadCart(userId) {
     } else {
         // Maneja el caso donde no hay productos en el carrito o no se pudo recuperar
         cartItemsContainer.innerHTML = '<p>Tu carrito está vacío</p>';
+        document.getElementById('cart-total').innerText = `Total: $0`;
+        document.getElementById('cart-total-items').innerText = `0`;
+
     }
 }
 
-
-
-
-async function addProductToCart(productId) {
+async function addProductToCart(product) {
+    console.log('entre aca')
+    console.log('uid', userId)
+    console.log('product', product)
+    let quantity = 1;
+    console.log('quantity', quantity)
     try {
-        const response = await fetch('/api/carts/add', {
+        const response = await fetch(`/api/carts/user/${userId}`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify({ productId })
+            body: JSON.stringify({ product, quantity })
         });
 
         if (!response.ok) {
             throw new Error('Error al agregar el producto al carrito');
         }
-
+        loadCart(userId)
         console.log('Producto agregado al carrito');
     } catch (error) {
         console.error('Error:', error);
     }
 }
 
-async function deleteProductFromCart(productId) {
+async function deleteProductFromCart(product) {
+    console.log('delete x product entrar')
     try {
-        const response = await fetch(`api/carts/${cartId}/products/${productId}`, {
+        const response = await fetch(`api/carts/${cartId}/products/${product}`, {
             method: 'DELETE'
         });
 
         const responseData = await response.json();
 
         if (response.ok) {
-            loadCart();
+            loadCart(userId);
         } else {
             alert('Error al eliminar producto: ' + responseData.message);
+        }
+    } catch (error) {
+        console.error('Hubo un problema con la solicitud fetch:', error);
+    }
+}
+
+
+
+async function deleteAllProductsFromCart() {
+    console.log('delete all product entrar')
+
+    try {
+        const response = await fetch(`api/carts/user/${userId}/`, {
+            method: 'DELETE'
+        });
+
+        const responseData = await response.json();
+
+        if (response.ok) {
+            loadCart(userId);
+        } else {
+            alert('Error al vaciar el carrito del usuario.' + responseData.message);
         }
     } catch (error) {
         console.error('Hubo un problema con la solicitud fetch:', error);

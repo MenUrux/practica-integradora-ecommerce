@@ -58,7 +58,6 @@
   }
 
   document.getElementById('thumbnails-container').addEventListener('click', function (event) {
-    // Comprobamos si el clic fue sobre un thumbnail
     if (event.target.classList.contains('thumbnail')) {
       const newSrc = event.target.src;
       document.getElementById('main-image').src = newSrc; // Actualizamos la imagen principal

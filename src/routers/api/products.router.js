@@ -54,6 +54,10 @@ router.get('/:pid', async (req, res, next) => {
 router.put('/:pid', async (req, res, next) => {
   req.logger.info(generateLoggerMessage(req));
   try {
+    if (!req.user) {
+      return res.status(403).json({ message: "Acceso denegado. Usuario no autenticado." });
+    }
+
     const { body, params: { pid } } = req;
     const updateResult = await ProductsController.update(pid, body);
     if (updateResult) {
