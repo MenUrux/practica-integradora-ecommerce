@@ -22,6 +22,7 @@ import userViewRouter from './routers/views/users.router.js';
 import authViewRouter from './routers/views/auth.router.js';
 import sessionsRouter from './routers/api/sessions.router.js';
 import documentsRouter from './routers/api/documents.router.js';
+import ticketRouter from './routers/api/ticket.router.js';
 import paymentsViewRouter from './routers/views/payments.router.js';
 
 import managementViewRouter from './routers/views/management.router.js';
@@ -78,6 +79,7 @@ app.use('/api/users', usersRouter);
 app.use('/api/documents', documentsRouter);
 app.use('/api/carts', cartsRouter);
 app.use('/api/products', productsRouter);
+app.use('/api/tickets', ticketRouter);
 app.use('/api/notifications', notificationsRouter);
 // app.use('/api/orders', ordersRouter);
 

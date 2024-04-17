@@ -82,11 +82,7 @@ async function loadCart(userId) {
 }
 
 async function addProductToCart(product) {
-    console.log('entre aca')
-    console.log('uid', userId)
-    console.log('product', product)
     let quantity = 1;
-    console.log('quantity', quantity)
     try {
         const response = await fetch(`/api/carts/user/${userId}`, {
             method: 'POST',
@@ -107,7 +103,6 @@ async function addProductToCart(product) {
 }
 
 async function deleteProductFromCart(product) {
-    console.log('delete x product entrar')
     try {
         const response = await fetch(`api/carts/${cartId}/products/${product}`, {
             method: 'DELETE'

@@ -6,9 +6,18 @@ export default class TicketMongoDbDao {
         return TicketModel.find(criteria, {}, opts);
     }
 
-    // Obtener un ticket por su ObjectId
     static async getById(oid) {
-        return TicketModel.findById(oid).populate('purchaser');
+        try {
+            return await TicketModel.findById(oid)
+                .populate('purchaser')
+                .populate({
+                    path: 'products.product',
+                    model: 'Product'
+                });
+        } catch (error) {
+            console.error("Error fetching ticket with ID:", oid, error);
+            throw error;
+        }
     }
 
     // Crear un nuevo ticket
@@ -18,16 +27,16 @@ export default class TicketMongoDbDao {
     }
 
     // Actualizar un ticket por su ObjectId
-    static async updateById(oid, data) {
-        const criteria = { _id: oid };
+    static async updateById(tid, data) {
+        const criteria = { _id: tid };
         const operation = { $set: data };
         const options = { new: true }; // Devuelve el documento modificado
         return TicketModel.findOneAndUpdate(criteria, operation, options);
     }
 
     // Borrar un ticket por su ObjectId
-    static async deleteById(oid) {
-        const criteria = { _id: oid };
+    static async deleteById(tid) {
+        const criteria = { _id: tid };
         return TicketModel.deleteOne(criteria);
     }
 

@@ -3,24 +3,31 @@ import { generatePurchaseConfirmationHTML, recoveryPassHTML, welcomeUser, attach
 import { client as clientTwilio, transport as nodemailerTransport } from '../config/nodemailer-and-twilio.config.js';
 import UsersController from '../controllers/users.controller.js';
 import UserModel from '../dao/models/user.model.js'
+import UserMongoDbDao from '../dao/user.mongodb.dao.js'
 
 
 class MailerAndSmsController {
-    static async sendPurchaseConfirmationEmail(req, res, next) {
-        const { first_name, email } = req.user;
-
-        // Arreglar lo del numero de compra. debo hacerlo con el numero de orden o brindar una id unica de orden.
-        const purchaseNumber = '2125151'
+    static async sendPurchaseConfirmationEmail(tid, ticketDetails, uid) {
         try {
+            const user = await UserModel.findById(uid);
+            if (!user) {
+                throw new Error('User not found');
+            }
+            console.log(ticketDetails)
+
+
             const emailHTML = generatePurchaseConfirmationHTML({
-                userName: first_name,
-                purchaseNumber,
+                userName: user.first_name,
+                purchaseNumber: tid._id,
+                products: ticketDetails.products,
+                total: ticketDetails.total
             });
+
 
             const result = await nodemailerTransport.sendMail({
                 from: process.env.EMAIL_NODEEMAILER,
-                to: email,
-                subject: `Gracias por tu compra! - ${ecommerceName}`,
+                to: user.email,
+                subject: `¡Gracias por tu compra! - ${ecommerceName}`,
                 html: emailHTML,
                 attachments: [{
                     filename: 'banner.png',
@@ -29,10 +36,10 @@ class MailerAndSmsController {
                 }]
             });
 
-            console.log(result);
-            res.status(201).json({ message: 'Confirmación enviada correctamente.', result });
+            console.log('Correo de confirmación enviado:', result);
         } catch (error) {
-            next(error);
+            console.error("Error al enviar el correo de confirmación:", error);
+            throw error;
         }
     }
 
