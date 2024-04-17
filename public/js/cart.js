@@ -167,6 +167,11 @@ async function processPurchase(userId) {
                 backgroundColor: "linear-gradient(to right, #00b09b, #96c93d)",
             }).showToast();
             loadCart(userId);
+            setTimeout(() => {
+                if (data) {
+                    window.location.href = '/thankyou';
+                }
+            }, 750);
         } else {
             throw new Error('Hubo un error en nuestra compra.');  // Assuming 'success' is a flag indicating purchase status
         }
