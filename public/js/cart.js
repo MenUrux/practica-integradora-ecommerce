@@ -142,5 +142,42 @@ async function deleteAllProductsFromCart() {
     }
 }
 
+async function processPurchase(userId) {
+    try {
+        const response = await fetch(`/api/tickets/create-ticket/${userId}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
 
+        if (!response.ok) {
+            throw new Error('Hubo un error en nuestra compra.');
+        }
 
+        const data = await response.json();
+
+        if (data) {
+            Toastify({
+                text: "Compra realizada",
+                duration: 3000,
+                close: true,
+                gravity: "top",
+                position: "center",
+                backgroundColor: "linear-gradient(to right, #00b09b, #96c93d)",
+            }).showToast();
+            loadCart(userId);
+        } else {
+            throw new Error('Hubo un error en nuestra compra.');  // Assuming 'success' is a flag indicating purchase status
+        }
+    } catch (error) {
+        Toastify({
+            text: error.message,
+            duration: 3000,
+            close: true,
+            gravity: "top",
+            position: "center",
+            backgroundColor: "linear-gradient(to right, #a40606, #d98324)",
+        }).showToast();
+    }
+}

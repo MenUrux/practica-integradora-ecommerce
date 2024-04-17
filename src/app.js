@@ -24,6 +24,7 @@ import sessionsRouter from './routers/api/sessions.router.js';
 import documentsRouter from './routers/api/documents.router.js';
 import ticketRouter from './routers/api/ticket.router.js';
 import paymentsViewRouter from './routers/views/payments.router.js';
+import thankyouViewRouter from './routers/views/thankyou.router.js';
 
 import managementViewRouter from './routers/views/management.router.js';
 
@@ -70,7 +71,7 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 app.use(addLogger)
-app.use('/', indexRouter, adminRouter, userViewRouter, debugRouter, productsViewRouter, managementViewRouter, authViewRouter, paymentsViewRouter);
+app.use('/', indexRouter, adminRouter, userViewRouter, debugRouter, productsViewRouter, managementViewRouter, authViewRouter, paymentsViewRouter, thankyouViewRouter);
 app.use('/api/loggerTest', loggersRouter);
 app.use('/api/mockingproducts', mockingRouter);
 app.use('/api/auth', authRouter);
